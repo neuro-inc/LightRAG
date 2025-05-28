@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp:*)",
+      "Bash(mkdir:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(chmod:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(docker-compose:*)",
+      "Bash(./start_postgres.sh:*)",
+      "Bash(timeout:*)",
+      "Bash(rg:*)",
+      "Bash(sed:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker exec:*)",
+      "Bash(curl:*)",
+      "Bash(./deploy-stacks.sh:*)"
+    ],
+    "deny": []
+  }
+}
