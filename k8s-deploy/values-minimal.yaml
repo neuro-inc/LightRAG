@@ -1,0 +1,72 @@
+# LightRAG Minimal Deployment Values
+# This file configures the minimal LightRAG setup for minikube
+
+# Secrets - IMPORTANT: Set your OpenAI API key here
+secrets:
+  openaiApiKey: ""  # TODO: Set your OpenAI API key
+
+# PostgreSQL configuration
+postgresql:
+  enabled: true
+  auth:
+    database: lightrag
+    username: lightrag_user
+    password: lightrag_pass_dev
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi  # Smaller size for development
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+    initdb:
+      scripts:
+        00-pgvector.sql: |
+          CREATE EXTENSION IF NOT EXISTS vector;
+
+# LightRAG resource configuration (smaller for minikube)
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# Persistence configuration (smaller volumes for development)
+persistence:
+  enabled: true
+  ragStorage:
+    size: 5Gi
+    storageClass: ""  # Use default storage class
+  inputs:
+    size: 2Gi
+    storageClass: ""  # Use default storage class
+
+# Environment overrides for development
+env:
+  WEBUI_TITLE: "Apolo Copilot - LightRAG (Minikube)"
+  WEBUI_DESCRIPTION: "Development instance of LightRAG for Apolo Documentation"
+  
+  # Using smaller model for development
+  LLM_MODEL: "gpt-4o-mini"
+  EMBEDDING_MODEL: "text-embedding-ada-002"
+  
+  # Keep storage configuration minimal
+  LIGHTRAG_KV_STORAGE: "PGKVStorage"
+  LIGHTRAG_VECTOR_STORAGE: "PGVectorStorage"
+  LIGHTRAG_DOC_STATUS_STORAGE: "PGDocStatusStorage"
+  LIGHTRAG_GRAPH_STORAGE: "NetworkXStorage"
+
+# Disable autoscaling for development
+autoscaling:
+  enabled: false
+
+# Service configuration
+service:
+  type: ClusterIP  # We'll use port-forward for local access
+  port: 9621
