@@ -32,7 +32,7 @@ This report analyzes 25+ storage implementations across 8 database technologies 
 - ✅ **Unified Database**: Single database for all storage types
 - ✅ **ACID Compliance**: Full transactional support
 - ✅ **Mature Ecosystem**: Well-established, enterprise-ready
-- ✅ **Cost Effective**: Single database to maintain
+- ✅ **Minimal**: Single database to maintain
 - ✅ **pgvector Extension**: Native vector operations with good performance
 - ✅ **SQL Familiarity**: Easy to query and debug
 
@@ -238,7 +238,7 @@ graph LR
     LightRAG_App --> |Doc Status Storage| PostgreSQL_Service
 ```
 
-### 3. 💰 **Production Cost-Effective Stack**
+### 3. 💰 **Production Minimal Stack**
 **Best for**: Budget-conscious production deployments
 
 ```yaml
@@ -369,7 +369,7 @@ graph LR
 | Configuration | CPU | Memory | Storage | Network |
 |--------------|-----|--------|---------|---------|
 | Development Stack | 2 cores | 4GB | 10GB | Minimal |
-| Cost-Effective Stack | 4 cores | 8GB | 50GB | Medium |
+| Minimal Stack | 4 cores | 8GB | 50GB | Medium |
 | Balanced Stack | 8 cores | 16GB | 100GB | High |
 | High-Performance Stack | 16+ cores | 32GB+ | 500GB+ | Very High |
 
@@ -378,7 +378,7 @@ graph LR
 | Stack Type | Setup Complexity | Operational Overhead | Monitoring | Backup Strategy |
 |-----------|------------------|---------------------|------------|-----------------|
 | Development | ⭐ | ⭐ | ⭐ | Simple |
-| Cost-Effective | ⭐⭐ | ⭐⭐ | ⭐⭐ | Medium |
+| Minimal | ⭐⭐ | ⭐⭐ | ⭐⭐ | Medium |
 | Balanced | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ | Complex |
 | High-Performance | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | Very Complex |
 
@@ -386,7 +386,7 @@ graph LR
 
 ### Development → Production
 1. Start with Development Stack (all file-based)
-2. Migrate to Cost-Effective Stack (PostgreSQL-based)
+2. Migrate to Minimal Stack (PostgreSQL-based)
 3. Scale to Balanced Stack (add specialized vector DB)
 4. Optimize with High-Performance Stack (full specialization)
 
@@ -399,7 +399,7 @@ graph LR
 
 ### 📚 **Documentation/Knowledge Base**
 - **Small (<10K docs)**: Development Stack
-- **Medium (<100K docs)**: Cost-Effective Stack  
+- **Medium (<100K docs)**: Minimal Stack  
 - **Large (>100K docs)**: Balanced Stack
 
 ### 🔬 **Research/Analytics**
@@ -409,17 +409,17 @@ graph LR
 
 ### 💼 **Enterprise**
 - **High Availability**: High-Performance Stack with clustering
-- **Budget Conscious**: Cost-Effective Stack with PostgreSQL
+- **Budget Conscious**: Minimal Stack with PostgreSQL
 - **Regulatory**: On-premises with full control
 
 ### 🚀 **Startups/SMBs**
 - **MVP**: Development Stack
-- **Growing**: Cost-Effective Stack
+- **Growing**: Minimal Stack
 - **Scaling**: Balanced Stack
 
 ## Conclusion
 
-The **Cost-Effective Stack** (PostgreSQL + NetworkX) provides the best balance of performance, complexity, and cost for most use cases. It offers:
+The **Minimal Stack** (PostgreSQL + NetworkX) provides the best balance of performance, complexity, and cost for most use cases. It offers:
 
 - ✅ Production-ready reliability
 - ✅ Reasonable performance for medium-scale deployments  

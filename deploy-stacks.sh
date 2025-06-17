@@ -151,14 +151,13 @@ show_usage() {
     echo "Available stacks:"
     echo "  development       File-based storage (NetworkX + NanoVector + JSON)"
     echo "  minimal           File-based storage (NetworkX + PostgreSQL)"
-    echo "  cost-effective    PostgreSQL-based (NetworkX + PostgreSQL)"
     echo "  balanced          Mixed storage (NetworkX + Qdrant + Redis + PostgreSQL)"
     echo "  high-performance  Specialized storage (Neo4j + Milvus + Redis + PostgreSQL)"
     echo "  all-in-one       Cloud-native (Neo4j + Qdrant + Redis + MongoDB)"
     echo ""
     echo "Examples:"
     echo "  $0 deploy development"
-    echo "  $0 stop cost-effective"
+    echo "  $0 stop Minimal"
     echo "  $0 cleanup high-performance"
 }
 
@@ -167,7 +166,6 @@ list_stacks() {
     print_status "Available LightRAG stack configurations:"
     echo ""
     echo "📚 development       - File-based storage, perfect for development"
-    echo "💰 cost-effective    - PostgreSQL-based, single database"
     echo "💰 minimal           - PostgreSQL-based, single database"
     echo "🎯 balanced          - Mixed storage, good performance/complexity balance"
     echo "🏆 high-performance  - Specialized databases, maximum performance"
