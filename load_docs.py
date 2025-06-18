@@ -15,10 +15,10 @@ from typing import List, Optional
 async def load_document_to_lightrag(
     content: str, 
     title: str, 
-    file_path: str,
+    doc_url: str,
     endpoint: str = "http://localhost:9621"
 ) -> bool:
-    """Load a single document to LightRAG"""
+    """Load a single document to LightRAG with URL reference"""
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
@@ -26,7 +26,7 @@ async def load_document_to_lightrag(
                 headers={"Content-Type": "application/json"},
                 json={
                     "text": content,
-                    "file_source": file_path
+                    "file_source": doc_url
                 }
             )
             
@@ -48,13 +48,35 @@ async def load_document_to_lightrag(
         return False
 
 
+def convert_file_path_to_url(relative_path: str) -> str:
+    """Convert file path to Apolo documentation URL"""
+    # Base URL for Apolo documentation
+    base_url = "https://docs.apolo.us/index/"
+    
+    # Handle special cases
+    if relative_path in ["README.md", "SUMMARY.md"]:
+        return f"{base_url}"
+    
+    # Remove .md extension and convert path
+    url_path = relative_path.replace(".md", "")
+    
+    # Handle README files in subdirectories - they map to the directory URL
+    if url_path.endswith("/README"):
+        url_path = url_path[:-7]  # Remove "/README"
+    
+    # Clean up any double slashes
+    url_path = url_path.strip("/")
+    
+    return f"{base_url}{url_path}"
+
+
 def load_markdown_files(docs_path: Path) -> List[tuple]:
     """Load all markdown files from directory structure"""
     if not docs_path.exists():
         raise FileNotFoundError(f"Documentation directory not found: {docs_path}")
     
-    # Find all markdown files
-    md_files = list(docs_path.rglob("*.md"))
+    # Find all markdown files, excluding SUMMARY.md as it's just the table of contents
+    md_files = [f for f in docs_path.rglob("*.md") if f.name != "SUMMARY.md"]
     print(f"📚 Found {len(md_files)} markdown files")
     
     documents = []
@@ -72,21 +94,24 @@ def load_markdown_files(docs_path: Path) -> List[tuple]:
             title = file_path.stem.replace("-", " ").replace("_", " ").title()
             if title.lower() == "readme":
                 # Use parent directory name for README files
-                title = f"{file_path.parent.name.title()} Overview"
+                title = f"{file_path.parent.name.replace('-', ' ').replace('_', ' ').title()} Overview"
             
             # Get relative path for metadata
             relative_path = str(file_path.relative_to(docs_path))
             
-            # Prepare content with basic metadata
+            # Convert file path to documentation URL
+            doc_url = convert_file_path_to_url(relative_path)
+            
+            # Prepare content with URL metadata
             content_with_metadata = f"""
 Title: {title}
-Path: {relative_path}
-Source: {file_path.name}
+URL: {doc_url}
+Source: Apolo Documentation
 
 {content}
 """
             
-            documents.append((content_with_metadata, title, relative_path))
+            documents.append((content_with_metadata, title, doc_url))
             
         except Exception as e:
             print(f"⚠️ Error processing {file_path}: {e}")
@@ -213,8 +238,8 @@ Examples:
     
     print(f"\n🔄 Starting to load documents...")
     
-    for i, (content, title, file_path) in enumerate(documents):
-        success = await load_document_to_lightrag(content, title, file_path, args.endpoint)
+    for i, (content, title, doc_url) in enumerate(documents):
+        success = await load_document_to_lightrag(content, title, doc_url, args.endpoint)
         
         if success:
             successful += 1
