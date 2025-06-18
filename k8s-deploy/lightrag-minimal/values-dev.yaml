@@ -1,0 +1,56 @@
+# Development/Minikube Values
+# Optimized for local development with reduced resource requirements
+
+# Environment configuration
+env:
+  LLM_MODEL: "gpt-4o"
+  WEBUI_TITLE: "Apolo Copilot - LightRAG (Development)"
+  WEBUI_DESCRIPTION: "Development LightRAG for Apolo Documentation"
+
+# Reduced resources for local development
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+# Smaller storage for development
+persistence:
+  ragStorage:
+    size: 5Gi
+  inputs:
+    size: 2Gi
+
+# PostgreSQL with reduced resources
+postgresql:
+  # Use pgvector image for vector support
+  image:
+    registry: docker.io
+    repository: pgvector/pgvector
+    tag: pg16
+  auth:
+    password: "dev-lightrag-pass"
+  primary:
+    persistence:
+      size: 5Gi
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+# OpenAI API key (set via environment variable)
+secrets:
+  openaiApiKey: "${OPENAI_API_KEY}"
+
+# Disable ingress for local development (use port-forward)
+ingress:
+  enabled: false
+
+# Disable autoscaling for development
+autoscaling:
+  enabled: false

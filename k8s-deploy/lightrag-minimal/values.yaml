@@ -48,9 +48,14 @@ persistence:
     size: 10Gi
     storageClass: ""
 
-# PostgreSQL configuration (embedded chart)
+# PostgreSQL configuration (embedded chart with pgvector)
 postgresql:
   enabled: true
+  # Use pgvector image instead of standard PostgreSQL
+  image:
+    registry: docker.io
+    repository: pgvector/pgvector
+    tag: pg16
   auth:
     database: lightrag
     username: lightrag_user
