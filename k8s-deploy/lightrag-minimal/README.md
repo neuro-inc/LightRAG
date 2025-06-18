@@ -210,23 +210,85 @@ helm uninstall lightrag-minimal
 
 ## Document Loading
 
-After successful deployment, load your documentation using the included loader:
+After successful deployment, load your documentation using the included loader. The loader supports two reference modes:
 
+### Reference Modes
+
+**Files Mode (Default)**: Uses file paths in citations
 ```bash
 # Install dependencies (if needed)
 pip install httpx
 
-# Load documents from any markdown directory
+# Load documents with file path references
 python ../../../load_docs.py /path/to/your/docs --endpoint http://localhost:9621
 
 # Example with relative path
 python ../../../load_docs.py ../docs --endpoint http://localhost:9621
 ```
 
-Expected output:
+**URLs Mode**: Uses website URLs in citations (recommended for public documentation)
+```bash
+# Load Apolo documentation with URL references
+python ../../../load_docs.py ../apolo-copilot/docs/official-apolo-documentation/docs \
+  --mode urls --base-url https://docs.apolo.us/index/ --endpoint http://localhost:9621
+
+# Load custom documentation with URL references  
+python ../../../load_docs.py /path/to/docs \
+  --mode urls --base-url https://your-docs.example.com/docs/ --endpoint http://localhost:9621
 ```
+
+### Benefits of URL Mode
+- **Clickable References**: Query responses include direct links to source documentation
+- **Better User Experience**: Users can easily navigate to original content
+- **Professional Citations**: References point to live documentation sites
+
+### ⚠️ Important: File Structure Requirements for URL Mode
+
+**Your local file structure must match your documentation site's URL structure:**
+
+```
+# Example: GitBook documentation site
+docs/
+├── getting-started/
+│   ├── installation.md          → https://docs.example.com/getting-started/installation
+│   └── first-steps.md           → https://docs.example.com/getting-started/first-steps
+├── administration/
+│   ├── README.md                → https://docs.example.com/administration
+│   └── setup.md                 → https://docs.example.com/administration/setup
+└── README.md                    → https://docs.example.com/
+```
+
+**Quick Setup Guide:**
+1. **Analyze your docs site**: Visit URLs and note the path structure
+2. **Create matching directories**: `mkdir -p docs/{section1,section2,section3}`
+3. **Organize markdown files**: Place files to match URL paths (remove `.md` from URLs)
+4. **Verify mapping**: Test a few URLs manually before loading
+
+**URL Mapping Rules:**
+- `.md` extension is removed from URLs
+- `README.md` files map to their directory URL  
+- Subdirectories become URL path segments
+- File and folder names should match URL slugs exactly
+
+### Expected Output
+
+Both modes produce similar output with different reference formats:
+
+```bash
+🚀 Loading Documentation into LightRAG
+============================================================
+📁 Documentation path: /path/to/docs
+🔧 Reference mode: urls
+🌐 Base URL: https://docs.apolo.us/index/
+🌐 LightRAG endpoint: http://localhost:9621
+
 ✅ LightRAG is healthy: healthy
 📚 Found 58 markdown files
+🔧 Mode: urls
+🌐 Base URL: https://docs.apolo.us/index/
+📊 Total content: 244,400 characters
+📊 Average length: 4,287 characters
+
 🔄 Starting to load documents...
 ✅ Loaded: Document Title
 📈 Progress: 10/58 (10 success, 0 failed)
@@ -235,6 +297,22 @@ Expected output:
 📊 Successful: 58
 📊 Failed: 0
 ✅ Query successful!
+```
+
+### Query Response Examples
+
+**Files Mode References:**
+```
+### References
+- [DC] getting-started/installation.md
+- [KG] administration/cluster-setup.md
+```
+
+**URLs Mode References:**
+```  
+### References
+- [DC] https://docs.apolo.us/index/getting-started/installation
+- [KG] https://docs.apolo.us/index/administration/cluster-setup
 ```
 
 ## Troubleshooting

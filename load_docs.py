@@ -48,14 +48,15 @@ async def load_document_to_lightrag(
         return False
 
 
-def convert_file_path_to_url(relative_path: str) -> str:
-    """Convert file path to Apolo documentation URL"""
-    # Base URL for Apolo documentation
-    base_url = "https://docs.apolo.us/index/"
+def convert_file_path_to_url(relative_path: str, base_url: str) -> str:
+    """Convert file path to documentation URL"""
+    # Ensure base URL ends with /
+    if not base_url.endswith('/'):
+        base_url += '/'
     
     # Handle special cases
     if relative_path in ["README.md", "SUMMARY.md"]:
-        return f"{base_url}"
+        return base_url.rstrip('/')
     
     # Remove .md extension and convert path
     url_path = relative_path.replace(".md", "")
@@ -70,14 +71,26 @@ def convert_file_path_to_url(relative_path: str) -> str:
     return f"{base_url}{url_path}"
 
 
-def load_markdown_files(docs_path: Path) -> List[tuple]:
-    """Load all markdown files from directory structure"""
+def load_markdown_files(docs_path: Path, mode: str = "files", base_url: str = None) -> List[tuple]:
+    """Load all markdown files from directory structure
+    
+    Args:
+        docs_path: Path to documentation directory
+        mode: 'files' for file paths, 'urls' for URL references
+        base_url: Base URL for documentation site (required for 'urls' mode)
+    """
     if not docs_path.exists():
         raise FileNotFoundError(f"Documentation directory not found: {docs_path}")
+    
+    if mode == "urls" and not base_url:
+        raise ValueError("base_url is required when mode is 'urls'")
     
     # Find all markdown files, excluding SUMMARY.md as it's just the table of contents
     md_files = [f for f in docs_path.rglob("*.md") if f.name != "SUMMARY.md"]
     print(f"📚 Found {len(md_files)} markdown files")
+    print(f"🔧 Mode: {mode}")
+    if mode == "urls":
+        print(f"🌐 Base URL: {base_url}")
     
     documents = []
     
@@ -99,19 +112,34 @@ def load_markdown_files(docs_path: Path) -> List[tuple]:
             # Get relative path for metadata
             relative_path = str(file_path.relative_to(docs_path))
             
-            # Convert file path to documentation URL
-            doc_url = convert_file_path_to_url(relative_path)
-            
-            # Prepare content with URL metadata
-            content_with_metadata = f"""
+            if mode == "files":
+                # Use file path as reference
+                reference = relative_path
+                source_info = f"File: {file_path.name}"
+                
+                # Prepare content with file metadata
+                content_with_metadata = f"""
 Title: {title}
-URL: {doc_url}
-Source: Apolo Documentation
+Path: {relative_path}
+Source: {source_info}
+
+{content}
+"""
+            else:  # urls mode
+                # Convert file path to documentation URL
+                reference = convert_file_path_to_url(relative_path, base_url)
+                source_info = f"Documentation Site"
+                
+                # Prepare content with URL metadata
+                content_with_metadata = f"""
+Title: {title}
+URL: {reference}
+Source: {source_info}
 
 {content}
 """
             
-            documents.append((content_with_metadata, title, doc_url))
+            documents.append((content_with_metadata, title, reference))
             
         except Exception as e:
             print(f"⚠️ Error processing {file_path}: {e}")
@@ -168,18 +196,25 @@ async def test_query(endpoint: str = "http://localhost:9621") -> None:
 async def main():
     """Main loading function"""
     parser = argparse.ArgumentParser(
-        description="Load documentation into LightRAG",
+        description="Load documentation into LightRAG with file paths or URL references",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Load from relative path
+  # Load with file path references (default mode)
   python load_docs.py ../apolo-copilot/docs/official-apolo-documentation/docs
   
-  # Load from absolute path  
-  python load_docs.py /path/to/documentation
+  # Load with URL references
+  python load_docs.py docs/ --mode urls --base-url https://docs.apolo.us/index/
+  
+  # Load Apolo docs with URL references (common use case)
+  python load_docs.py ../apolo-copilot/docs/official-apolo-documentation/docs \\
+    --mode urls --base-url https://docs.apolo.us/index/
   
   # Use custom endpoint
   python load_docs.py docs/ --endpoint https://lightrag.example.com
+  
+  # Load with different documentation base URL
+  python load_docs.py docs/ --mode urls --base-url https://my-docs.example.com/docs/
 """
     )
     
@@ -188,6 +223,17 @@ Examples:
         nargs="?",
         default="../apolo-copilot/docs/official-apolo-documentation/docs",
         help="Path to documentation directory (default: ../apolo-copilot/docs/official-apolo-documentation/docs)"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["files", "urls"],
+        default="files",
+        help="Reference mode: 'files' for file paths, 'urls' for URL references (default: files)"
+    )
+    parser.add_argument(
+        "--base-url",
+        dest="base_url",
+        help="Base URL for documentation site (required when mode=urls). Example: https://docs.apolo.us/index/"
     )
     parser.add_argument(
         "--endpoint",
@@ -205,6 +251,13 @@ Examples:
     print("🚀 Loading Documentation into LightRAG")
     print("=" * 60)
     print(f"📁 Documentation path: {args.docs_path}")
+    print(f"🔧 Reference mode: {args.mode}")
+    if args.mode == "urls":
+        if args.base_url:
+            print(f"🌐 Base URL: {args.base_url}")
+        else:
+            print("❌ Error: --base-url is required when mode is 'urls'")
+            sys.exit(1)
     print(f"🌐 LightRAG endpoint: {args.endpoint}")
     print()
     
@@ -216,8 +269,8 @@ Examples:
     # Load documents
     docs_path = Path(args.docs_path).resolve()
     try:
-        documents = load_markdown_files(docs_path)
-    except FileNotFoundError as e:
+        documents = load_markdown_files(docs_path, args.mode, args.base_url)
+    except (FileNotFoundError, ValueError) as e:
         print(f"❌ {e}")
         sys.exit(1)
     

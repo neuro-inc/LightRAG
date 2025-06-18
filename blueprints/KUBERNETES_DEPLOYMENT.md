@@ -268,18 +268,24 @@ kubectl logs --namespace lightrag -l app.kubernetes.io/name=postgresql -f
 
 ## 📚 Load Documentation
 
-After successful deployment, load your documentation into LightRAG:
+After successful deployment, load your documentation into LightRAG using the advanced documentation loader with dual reference modes:
 
-### Using the Included Documentation Loader
+### Using the Enhanced Documentation Loader
 
-LightRAG includes a simple documentation loader that can process any markdown files:
+LightRAG includes an advanced documentation loader with flexible reference modes:
 
 ```bash
 # Ensure port forwarding is active
 kubectl port-forward --namespace lightrag svc/lightrag-minimal 9621:9621 &
 
-# Load documentation from any directory
+# Files Mode (Default) - Uses file paths in citations
 python load_docs.py /path/to/your/docs
+
+# URLs Mode - Uses website URLs in citations (recommended for public docs)
+python load_docs.py /path/to/docs --mode urls --base-url https://docs.example.com/
+
+# Load Apolo documentation with URL references
+python load_docs.py /path/to/apolo-docs --mode urls --base-url https://docs.apolo.us/index/
 
 # Load with custom endpoint
 python load_docs.py /path/to/docs --endpoint https://lightrag.yourdomain.com
@@ -287,6 +293,39 @@ python load_docs.py /path/to/docs --endpoint https://lightrag.yourdomain.com
 # Skip test query after loading
 python load_docs.py /path/to/docs --no-test
 ```
+
+### Reference Mode Benefits
+
+**Files Mode (Default):**
+- Uses local file paths in query response references
+- Good for internal documentation or development
+- Example: `[DC] getting-started/installation.md`
+
+**URLs Mode:**
+- Uses live website URLs in query response references  
+- Provides clickable links in responses
+- Better user experience with direct access to source material
+- Example: `[DC] https://docs.apolo.us/index/getting-started/installation`
+
+### ⚠️ File Structure Requirements for URL Mode
+
+**Critical**: Your local file structure must exactly match your documentation site's URL structure.
+
+**Example Mapping:**
+```
+# Local file structure → Website URLs
+docs/getting-started/installation.md → https://docs.example.com/getting-started/installation
+docs/api/README.md                  → https://docs.example.com/api
+docs/guides/deployment.md           → https://docs.example.com/guides/deployment
+```
+
+**Setup Instructions:**
+1. **Analyze your docs site URLs** - Note the exact path structure
+2. **Create matching directories** - Mirror the URL structure locally  
+3. **Place files correctly** - Remove `.md` from URL paths to match filenames
+4. **Test URLs** - Verify a few links work before loading documents
+
+This ensures generated URLs in query responses are valid and clickable.
 
 ### Loader Features
 
