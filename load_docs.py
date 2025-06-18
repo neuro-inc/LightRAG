@@ -26,7 +26,7 @@ async def load_document_to_lightrag(
                 headers={"Content-Type": "application/json"},
                 json={
                     "text": content,
-                    "file_path": file_path
+                    "file_source": file_path
                 }
             )
             
@@ -120,7 +120,7 @@ async def test_query(endpoint: str = "http://localhost:9621") -> None:
             response = await client.post(
                 f"{endpoint}/query",
                 headers={"Content-Type": "application/json"},
-                json={"query": "What is this documentation about?", "mode": "hybrid"}
+                json={"query": "What is this documentation about?", "mode": "local"}
             )
             
             if response.status_code == 200:
@@ -129,6 +129,12 @@ async def test_query(endpoint: str = "http://localhost:9621") -> None:
                 print(f"Response: {result['response'][:200]}...")
             else:
                 print(f"❌ Query failed: {response.status_code}")
+                if response.status_code == 500:
+                    try:
+                        error_detail = response.json()
+                        print(f"   Error details: {error_detail}")
+                    except:
+                        print(f"   Response: {response.text}")
                 
     except Exception as e:
         print(f"❌ Query error: {e}")
