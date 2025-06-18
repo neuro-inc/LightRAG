@@ -15,6 +15,7 @@ from typing import List, Optional
 async def load_document_to_lightrag(
     content: str, 
     title: str, 
+    file_path: str,
     endpoint: str = "http://localhost:9621"
 ) -> bool:
     """Load a single document to LightRAG"""
@@ -23,7 +24,10 @@ async def load_document_to_lightrag(
             response = await client.post(
                 f"{endpoint}/documents/text",
                 headers={"Content-Type": "application/json"},
-                json={"text": content}
+                json={
+                    "text": content,
+                    "file_path": file_path
+                }
             )
             
             if response.status_code == 200:
@@ -31,6 +35,12 @@ async def load_document_to_lightrag(
                 return True
             else:
                 print(f"❌ Failed to load {title}: {response.status_code}")
+                if response.status_code == 500:
+                    try:
+                        error_detail = response.json()
+                        print(f"   Error details: {error_detail}")
+                    except:
+                        print(f"   Response: {response.text}")
                 return False
                 
     except Exception as e:
@@ -76,7 +86,7 @@ Source: {file_path.name}
 {content}
 """
             
-            documents.append((content_with_metadata, title))
+            documents.append((content_with_metadata, title, relative_path))
             
         except Exception as e:
             print(f"⚠️ Error processing {file_path}: {e}")
@@ -185,7 +195,7 @@ Examples:
         sys.exit(1)
     
     # Calculate statistics
-    total_content = sum(len(content) for content, _ in documents)
+    total_content = sum(len(content) for content, _, _ in documents)
     avg_content = total_content // len(documents) if documents else 0
     
     print(f"📊 Total content: {total_content:,} characters")
@@ -197,8 +207,8 @@ Examples:
     
     print(f"\n🔄 Starting to load documents...")
     
-    for i, (content, title) in enumerate(documents):
-        success = await load_document_to_lightrag(content, title, args.endpoint)
+    for i, (content, title, file_path) in enumerate(documents):
+        success = await load_document_to_lightrag(content, title, file_path, args.endpoint)
         
         if success:
             successful += 1
