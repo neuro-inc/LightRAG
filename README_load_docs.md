@@ -5,9 +5,6 @@ Simple script to load markdown documentation into LightRAG.
 ## Usage
 
 ```bash
-# Basic usage with default Apolo documentation
-python load_docs.py ../apolo-copilot/docs/official-apolo-documentation/docs
-
 # Custom documentation path
 python load_docs.py /path/to/your/docs
 
@@ -33,13 +30,18 @@ python load_docs.py docs/ --no-test
 pip install httpx
 ```
 
-## Comparison with Advanced Loader
+## Use Cases
 
-| Feature | This Script | apolo-copilot/load_docs.py |
-|---------|-------------|---------------------------|
-| Dependencies | httpx only | Full project environment |
-| Processing | Basic markdown loading | Advanced entity extraction |
-| Setup time | Immediate | Requires poetry install |
-| Use case | Quick testing/deployment | Production knowledge base |
+This loader is perfect for:
+- **Kubernetes deployments**: Self-contained with minimal dependencies
+- **Quick testing**: Immediate setup without complex environments
+- **Documentation loading**: Any markdown-based documentation
+- **Development workflows**: Fast iteration and testing
 
-For production deployments with rich metadata and entity extraction, use the advanced loader in the `apolo-copilot` directory.
+## Requirements
+
+```bash
+pip install httpx
+```
+
+**Note**: This script is included with LightRAG deployments and provides a simple way to load any markdown documentation into your LightRAG instance.

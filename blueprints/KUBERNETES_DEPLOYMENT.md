@@ -266,65 +266,63 @@ kubectl logs --namespace lightrag -l app.kubernetes.io/name=lightrag-minimal -f
 kubectl logs --namespace lightrag -l app.kubernetes.io/name=postgresql -f
 ```
 
-## 📚 Load Apolo Documentation
+## 📚 Load Documentation
 
-After successful deployment, load the Apolo platform documentation:
+After successful deployment, load your documentation into LightRAG:
 
-### Option 1: Simplified Loading (Recommended for Kubernetes deployment)
+### Using the Included Documentation Loader
+
+LightRAG includes a simple documentation loader that can process any markdown files:
+
 ```bash
 # Ensure port forwarding is active
 kubectl port-forward --namespace lightrag svc/lightrag-minimal 9621:9621 &
 
-# Use the simplified loader included with LightRAG
-python load_docs.py ../apolo-copilot/docs/official-apolo-documentation/docs
+# Load documentation from any directory
+python load_docs.py /path/to/your/docs
 
-# Or with custom endpoint
-python load_docs.py ../apolo-copilot/docs/official-apolo-documentation/docs --endpoint https://lightrag.yourdomain.com
+# Load with custom endpoint
+python load_docs.py /path/to/docs --endpoint https://lightrag.yourdomain.com
+
+# Skip test query after loading
+python load_docs.py /path/to/docs --no-test
 ```
 
-### Option 2: Advanced Loading (Full DocumentationLoader features)
-```bash
-# Navigate to apolo-copilot directory for advanced processing
-cd ../apolo-copilot
+### Loader Features
 
-# Use the advanced loader with intelligent processing
-poetry run python load_docs.py
-
-# Or with custom path and endpoint
-poetry run python load_docs.py --docs-path /path/to/docs --endpoint https://lightrag.yourdomain.com
-```
-
-### Comparison of Loading Options
-
-| Feature | Simplified (LightRAG/load_docs.py) | Advanced (apolo-copilot/load_docs.py) |
-|---------|-----------------------------------|---------------------------------------|
-| **Dependencies** | httpx only | Full apolo-copilot environment |
-| **Processing** | Basic markdown loading | Intelligent classification & entity extraction |
-| **Metadata** | Title, path, source | Section, audience, entities, CLI commands |
-| **Performance** | Faster, lighter | More comprehensive analysis |
-| **Use Case** | Quick deployment testing | Production knowledge base |
+- **Simple dependencies**: Only requires `httpx` 
+- **Automatic discovery**: Finds all `.md` files recursively
+- **Basic metadata**: Adds title, path, and source information
+- **Progress tracking**: Shows loading progress with success/failure counts
+- **Health checks**: Verifies LightRAG connectivity before loading
+- **Test queries**: Validates functionality after loading
 
 ### Expected Output
 ```
-🚀 Loading Apolo Documentation into LightRAG
+🚀 Loading Documentation into LightRAG
 ============================================================
-📚 Found 58 documents to load
-📊 Total content: 241,043 characters
-📊 Average length: 4,155 characters
+📁 Documentation path: /path/to/docs
+🌐 LightRAG endpoint: http://localhost:9621
+
+✅ LightRAG is healthy: healthy
+📚 Found 25 markdown files
+📊 Total content: 150,000 characters
+📊 Average length: 6,000 characters
 
 🔄 Starting to load documents...
-✅ Loaded: Summary
 ✅ Loaded: Getting Started
-✅ Loaded: Architecture Overview
-... (58 documents total)
+✅ Loaded: Installation Guide
+✅ Loaded: API Reference
+... (25 documents total)
+📈 Progress: 20/25 (20 success, 0 failed)
 
 ✅ Loading complete!
-📊 Successful: 58
+📊 Successful: 25
 📊 Failed: 0
 
 🧪 Testing query...
 ✅ Query successful!
-Response: To create a job on the platform, you would typically use...
+Response: This documentation covers...
 ```
 
 ### Verify Documentation Loading
@@ -335,7 +333,7 @@ curl http://localhost:9621/documents | jq '.documents | length'
 # Test a sample query
 curl -X POST http://localhost:9621/query \
   -H "Content-Type: application/json" \
-  -d '{"query": "How do I create a job?", "mode": "hybrid"}'
+  -d '{"query": "How do I get started?", "mode": "hybrid"}'
 ```
 
 ## 🔄 Management Commands
@@ -454,7 +452,7 @@ This deployment process has been thoroughly validated through complete teardown 
 - ✅ **PostgreSQL with pgvector** - Automatic extension creation via initdb scripts
 - ✅ **Resource Management** - Proper CPU/memory limits and persistent storage
 - ✅ **API Functionality** - Health, document upload, and query endpoints working
-- ✅ **Documentation Loading** - Successful loading of 58 Apolo documentation files
+- ✅ **Documentation Loading** - Successful loading of markdown documentation files
 
 ### Test Results
 ```bash
@@ -463,7 +461,7 @@ This deployment process has been thoroughly validated through complete teardown 
 📊 PostgreSQL: running with pgvector extension
 📊 Storage: 3 PVCs bound (12Gi total)
 📊 API: All endpoints responding correctly
-📊 Documentation: 0/58 documents loaded (ready for import)
+📊 Documentation: Ready for loading with included loader script
 ```
 
 This approach provides a production-ready, maintainable solution for deploying LightRAG to any Kubernetes cluster with confidence in its reliability and repeatability.
