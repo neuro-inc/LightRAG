@@ -6,6 +6,25 @@ env:
   LLM_MODEL: "gpt-4o"
   WEBUI_TITLE: "Apolo Copilot - LightRAG"
   WEBUI_DESCRIPTION: "Production LightRAG for Apolo Documentation"
+  
+  # OpenAI API Configuration
+  LLM_BINDING: "openai"
+  LLM_BINDING_HOST: "https://api.openai.com/v1"
+  EMBEDDING_BINDING: "openai"
+  EMBEDDING_BINDING_HOST: "https://api.openai.com/v1"
+  EMBEDDING_MODEL: "text-embedding-ada-002"
+  EMBEDDING_DIM: "1536"
+  
+  # Concurrency settings (conservative for API stability)
+  MAX_ASYNC: "4"
+  MAX_PARALLEL_INSERT: "2"
+  
+  # LLM Configuration
+  ENABLE_LLM_CACHE: "true"
+  ENABLE_LLM_CACHE_FOR_EXTRACT: "true"
+  TIMEOUT: "240"
+  TEMPERATURE: "0"
+  MAX_TOKENS: "32768"
 
 # Production resources
 resources:
