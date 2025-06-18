@@ -1,45 +1,47 @@
-1. Get the application URL by running these commands:
+✅ LightRAG deployment successful!
+
+1. Wait for all pods to be ready:
+  kubectl wait --namespace {{ .Release.Namespace }} --for=condition=ready pod -l app.kubernetes.io/name=postgresql --timeout=120s
+  kubectl wait --namespace {{ .Release.Namespace }} --for=condition=ready pod -l app.kubernetes.io/name={{ include "lightrag-minimal.name" . }} --timeout=120s
+
+2. Access your application:
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
+  🌐 Web UI: http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}webui
+  📚 API Docs: http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}docs
   {{- end }}
 {{- end }}
-{{- else if contains "NodePort" .Values.service.type }}
-  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "lightrag-minimal.fullname" . }})
-  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
-  echo http://$NODE_IP:$NODE_PORT
-{{- else if contains "LoadBalancer" .Values.service.type }}
-     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "lightrag-minimal.fullname" . }}'
-  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "lightrag-minimal.fullname" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
-  echo http://$SERVICE_IP:{{ .Values.service.port }}
-{{- else if contains "ClusterIP" .Values.service.type }}
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "lightrag-minimal.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  export CONTAINER_PORT=$(kubectl get pod --namespace {{ .Release.Namespace }} $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
-  echo "Visit http://127.0.0.1:9621 to use your application"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 9621:$CONTAINER_PORT
+{{- else }}
+  # Start port forwarding (run in background):
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "lightrag-minimal.fullname" . }} 9621:9621 &
+  
+  🌐 Web UI: http://localhost:9621/webui
+  📚 API Docs: http://localhost:9621/docs
+  🔍 Health Check: http://localhost:9621/health
 {{- end }}
 
-2. Wait for the PostgreSQL database to be ready:
-  kubectl wait --namespace {{ .Release.Namespace }} --for=condition=ready pod -l app.kubernetes.io/name=postgresql
+3. Verify deployment health:
+  curl http://localhost:9621/health
+  # Expected: {"status": "healthy", "configuration": {...}}
 
-3. Check the status of your LightRAG deployment:
-  kubectl get pods --namespace {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "lightrag-minimal.name" . }}
+4. Load your documents:
+  # Install httpx if needed: pip install httpx
+  python ../../../load_docs.py /path/to/your/docs --endpoint http://localhost:9621
 
-4. View the logs:
+5. Monitor your deployment:
+  # Check pods status
+  kubectl get pods --namespace {{ .Release.Namespace }}
+  
+  # View logs
   kubectl logs --namespace {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "lightrag-minimal.name" . }} -f
 
-5. To set your OpenAI API key after deployment:
-  kubectl create secret generic {{ include "lightrag-minimal.secretName" . }} \
-    --from-literal=openai-api-key=YOUR_OPENAI_API_KEY \
-    --namespace {{ .Release.Namespace }} \
-    --dry-run=client -o yaml | kubectl apply -f -
-
-6. Access the Web UI at the URL shown above and start uploading documents!
-
 Configuration Summary:
-- Storage: PostgreSQL for vectors/KV, NetworkX for graph (local storage)
-- Persistence: {{ if .Values.persistence.enabled }}Enabled{{ else }}Disabled{{ end }}
-- Resource Limits: {{ .Values.resources.limits.cpu }} CPU, {{ .Values.resources.limits.memory }} Memory
-- PostgreSQL: {{ if .Values.postgresql.enabled }}Enabled (embedded){{ else }}External{{ end }}
+🗄️  Storage: PostgreSQL with pgvector + NetworkX graph storage
+🔒 Persistence: {{ if .Values.persistence.ragStorage.enabled }}Enabled{{ else }}Disabled{{ end }} ({{ .Values.persistence.ragStorage.size }} storage)
+💻 Resources: {{ .Values.resources.limits.cpu }} CPU, {{ .Values.resources.limits.memory }} memory
+🐘 PostgreSQL: pgvector/pgvector:pg16 with {{ .Values.postgresql.primary.persistence.size }} storage
+🤖 LLM Model: {{ .Values.env.LLM_MODEL }}
+📊 Concurrency: MAX_ASYNC={{ .Values.env.MAX_ASYNC }}, MAX_PARALLEL_INSERT={{ .Values.env.MAX_PARALLEL_INSERT }}
+
+📖 For detailed usage instructions, see the README.md in the chart directory.
