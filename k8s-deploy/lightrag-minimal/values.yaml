@@ -19,6 +19,7 @@ service:
 ingress:
   enabled: false
   className: ""
+  clusterName: ""
   annotations: {}
   hosts:
     - host: lightrag-minimal.local
@@ -26,6 +27,14 @@ ingress:
         - path: /
           pathType: Prefix
   tls: []
+  forwardAuth:
+    enabled: false
+    # name: forwardauth
+    # address: http://forwardauth:8080
+    # trustForwardHeader: true
+    # authRequestHeaders:
+    #   - "Cookie"
+    #   - "Authorization"
 
 # Resource limits and requests
 resources:
