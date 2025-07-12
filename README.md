@@ -1,43 +1,52 @@
-<center><h2>🚀 LightRAG: Simple and Fast Retrieval-Augmented Generation</h2></center>
-
 <div align="center">
-<table border="0" width="100%">
-<tr>
-<td width="100" align="center">
-<img src="./assets/logo.png" width="80" height="80" alt="lightrag">
-</td>
-<td>
 
-<div>
-    <p>
-        <a href='https://lightrag.github.io'><img src='https://img.shields.io/badge/Project-Page-Green'></a>
-        <a href='https://youtu.be/oageL-1I0GE'><img src='https://badges.aleen42.com/src/youtube.svg'></a>
-        <a href='https://arxiv.org/abs/2410.05779'><img src='https://img.shields.io/badge/arXiv-2410.05779-b31b1b'></a>
-        <a href='https://learnopencv.com/lightrag'><img src='https://img.shields.io/badge/LearnOpenCV-blue'></a>
-    </p>
-    <p>
-        <img src='https://img.shields.io/github/stars/hkuds/lightrag?color=green&style=social' />
-        <img src="https://img.shields.io/badge/python-3.10-blue">
-        <a href="https://pypi.org/project/lightrag-hku/"><img src="https://img.shields.io/pypi/v/lightrag-hku.svg"></a>
-        <a href="https://pepy.tech/project/lightrag-hku"><img src="https://static.pepy.tech/badge/lightrag-hku/month"></a>
-    </p>
-    <p>
-        <a href='https://discord.gg/yF2MmDJyGJ'><img src='https://discordapp.com/api/guilds/1296348098003734629/widget.png?style=shield'></a>
-        <a href='https://github.com/HKUDS/LightRAG/issues/285'><img src='https://img.shields.io/badge/群聊-wechat-green'></a>
-    </p>
+<div style="margin: 20px 0;">
+  <img src="./assets/logo.png" width="120" height="120" alt="LightRAG Logo" style="border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 217, 255, 0.3);">
 </div>
-</td>
-</tr>
-</table>
 
-<img src="./README.assets/b2aaf634151b4706892693ffb43d9093.png" width="800" alt="LightRAG Diagram">
-
-</div>
+# 🚀 LightRAG: Simple and Fast Retrieval-Augmented Generation
 
 <div align="center">
     <a href="https://trendshift.io/repositories/13043" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13043" alt="HKUDS%2FLightRAG | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 </div>
 
+<div align="center">
+  <div style="width: 100%; height: 2px; margin: 20px 0; background: linear-gradient(90deg, transparent, #00d9ff, transparent);"></div>
+</div>
+
+<div align="center">
+  <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; padding: 25px; text-align: center;">
+    <p>
+      <a href='https://github.com/HKUDS/LightRAG'><img src='https://img.shields.io/badge/🔥Project-Page-00d9ff?style=for-the-badge&logo=github&logoColor=white&labelColor=1a1a2e'></a>
+      <a href='https://arxiv.org/abs/2410.05779'><img src='https://img.shields.io/badge/📄arXiv-2410.05779-ff6b6b?style=for-the-badge&logo=arxiv&logoColor=white&labelColor=1a1a2e'></a>
+      <a href="https://github.com/HKUDS/LightRAG/stargazers"><img src='https://img.shields.io/github/stars/HKUDS/LightRAG?color=00d9ff&style=for-the-badge&logo=star&logoColor=white&labelColor=1a1a2e' /></a>
+    </p>
+    <p>
+      <img src="https://img.shields.io/badge/🐍Python-3.10-4ecdc4?style=for-the-badge&logo=python&logoColor=white&labelColor=1a1a2e">
+      <a href="https://pypi.org/project/lightrag-hku/"><img src="https://img.shields.io/pypi/v/lightrag-hku.svg?style=for-the-badge&logo=pypi&logoColor=white&labelColor=1a1a2e&color=ff6b6b"></a>
+    </p>
+    <p>
+      <a href="https://discord.gg/yF2MmDJyGJ"><img src="https://img.shields.io/badge/💬Discord-Community-7289da?style=for-the-badge&logo=discord&logoColor=white&labelColor=1a1a2e"></a>
+      <a href="https://github.com/HKUDS/LightRAG/issues/285"><img src="https://img.shields.io/badge/💬WeChat-Group-07c160?style=for-the-badge&logo=wechat&logoColor=white&labelColor=1a1a2e"></a>
+    </p>
+    <p>
+      <a href="README-zh.md"><img src="https://img.shields.io/badge/🇨🇳中文版-1a1a2e?style=for-the-badge"></a>
+      <a href="README.md"><img src="https://img.shields.io/badge/🇺🇸English-1a1a2e?style=for-the-badge"></a>
+    </p>
+  </div>
+</div>
+
+</div>
+
+<div align="center" style="margin: 30px 0;">
+  <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="800">
+</div>
+
+<div align="center" style="margin: 30px 0;">
+    <img src="./README.assets/b2aaf634151b4706892693ffb43d9093.png" width="800" alt="LightRAG Diagram">
+</div>
+
+---
 ## 🎉 News
 - [X] [2025.06.16]🎯📢Our team has released [RAG-Anything](https://github.com/HKUDS/RAG-Anything) an All-in-One Multimodal RAG System for seamless text, image, table, and equation processing.
 - [X] [2025.06.05]🎯📢LightRAG now supports comprehensive multimodal data handling through [RAG-Anything](https://github.com/HKUDS/RAG-Anything) integration, enabling seamless document parsing and RAG capabilities across diverse formats including PDFs, images, Office documents, tables, and formulas. Please refer to the new [multimodal section](https://github.com/HKUDS/LightRAG/?tab=readme-ov-file#multimodal-document-processing-rag-anything-integration) for details.
@@ -80,6 +89,8 @@ The LightRAG Server is designed to provide Web UI and API support. The Web UI fa
 
 ```bash
 pip install "lightrag-hku[api]"
+cp env.example .env
+lightrag-server
 ```
 
 * Installation from Source
@@ -90,6 +101,8 @@ cd LightRAG
 # create a Python virtual enviroment if neccesary
 # Install in editable mode with API support
 pip install -e ".[api]"
+cp env.example .env
+lightrag-server
 ```
 
 * Launching the LightRAG Server with Docker Compose
@@ -140,7 +153,7 @@ curl https://raw.githubusercontent.com/gusye1234/nano-graphrag/main/tests/mock_d
 python examples/lightrag_openai_demo.py
 ```
 
-For a streaming response implementation example, please see `examples/lightrag_openai_compatible_demo.py`. Prior to execution, ensure you modify the sample code’s LLM and embedding configurations accordingly.
+For a streaming response implementation example, please see `examples/lightrag_openai_compatible_demo.py`. Prior to execution, ensure you modify the sample code's LLM and embedding configurations accordingly.
 
 **Note 1**: When running the demo program, please be aware that different test scripts may use different embedding models. If you switch to a different embedding model, you must clear the data directory (`./dickens`); otherwise, the program may encounter errors. If you wish to retain the LLM cache, you can preserve the `kv_store_llm_response_cache.json` file while clearing the data directory.
 
@@ -192,7 +205,7 @@ async def main():
         rag.insert("Your text")
 
         # Perform hybrid search
-        mode="hybrid"
+        mode = "hybrid"
         print(
           await rag.query(
               "What are the top themes in this story?",
@@ -226,6 +239,7 @@ A full list of LightRAG init parameters:
 | **Parameter** | **Type** | **Explanation** | **Default** |
 |--------------|----------|-----------------|-------------|
 | **working_dir** | `str` | Directory where the cache will be stored | `lightrag_cache+timestamp` |
+| **workspace** | str | Workspace name for data isolation between different LightRAG Instances |  |
 | **kv_storage** | `str` | Storage type for documents and text chunks. Supported types: `JsonKVStorage`,`PGKVStorage`,`RedisKVStorage`,`MongoKVStorage` | `JsonKVStorage` |
 | **vector_storage** | `str` | Storage type for embedding vectors. Supported types: `NanoVectorDBStorage`,`PGVectorStorage`,`MilvusVectorDBStorage`,`ChromaVectorDBStorage`,`FaissVectorDBStorage`,`MongoVectorDBStorage`,`QdrantVectorDBStorage` | `NanoVectorDBStorage` |
 | **graph_storage** | `str` | Storage type for graph edges and nodes. Supported types: `NetworkXStorage`,`Neo4JStorage`,`PGGraphStorage`,`AGEStorage` | `NetworkXStorage` |
@@ -286,6 +300,16 @@ class QueryParam:
 
     top_k: int = int(os.getenv("TOP_K", "60"))
     """Number of top items to retrieve. Represents entities in 'local' mode and relationships in 'global' mode."""
+
+    chunk_top_k: int = int(os.getenv("CHUNK_TOP_K", "5"))
+    """Number of text chunks to retrieve initially from vector search.
+    If None, defaults to top_k value.
+    """
+
+    chunk_rerank_top_k: int = int(os.getenv("CHUNK_RERANK_TOP_K", "5"))
+    """Number of text chunks to keep after reranking.
+    If None, keeps all chunks returned from initial retrieval.
+    """
 
     max_token_for_text_unit: int = int(os.getenv("MAX_TOKEN_TEXT_CHUNK", "4000"))
     """Maximum number of tokens allowed for each retrieved text chunk."""
@@ -810,6 +834,8 @@ For production level scenarios you will most likely want to leverage an enterpri
 
 <details>
 <summary> <b>Using Faiss for Storage</b> </summary>
+You must manually install faiss-cpu or faiss-gpu before using FAISS vector db.
+Manually install `faiss-cpu` or `faiss-gpu` before using FAISS vector db.
 
 - Install the required dependencies:
 
@@ -844,6 +870,52 @@ rag = LightRAG(
 ```
 
 </details>
+
+<details>
+<summary> <b>Using Memgraph for Storage</b> </summary>
+
+* Memgraph is a high-performance, in-memory graph database compatible with the Neo4j Bolt protocol.
+* You can run Memgraph locally using Docker for easy testing:
+* See: https://memgraph.com/download
+
+```python
+export MEMGRAPH_URI="bolt://localhost:7687"
+
+# Setup logger for LightRAG
+setup_logger("lightrag", level="INFO")
+
+# When you launch the project, override the default KG: NetworkX
+# by specifying kg="MemgraphStorage".
+
+# Note: Default settings use NetworkX
+# Initialize LightRAG with Memgraph implementation.
+async def initialize_rag():
+    rag = LightRAG(
+        working_dir=WORKING_DIR,
+        llm_model_func=gpt_4o_mini_complete,  # Use gpt_4o_mini_complete LLM model
+        graph_storage="MemgraphStorage", #<-----------override KG default
+    )
+
+    # Initialize database connections
+    await rag.initialize_storages()
+    # Initialize pipeline status for document processing
+    await initialize_pipeline_status()
+
+    return rag
+```
+
+</details>
+
+### Data Isolation Between LightRAG Instances
+
+The `workspace` parameter ensures data isolation between different LightRAG instances. Once initialized, the `workspace` is immutable and cannot be changed.Here is how workspaces are implemented for different types of storage:
+
+- **For local file-based databases, data isolation is achieved through workspace subdirectories:** `JsonKVStorage`, `JsonDocStatusStorage`, `NetworkXStorage`, `NanoVectorDBStorage`, `FaissVectorDBStorage`.
+- **For databases that store data in collections, it's done by adding a workspace prefix to the collection name:** `RedisKVStorage`, `RedisDocStatusStorage`, `MilvusVectorDBStorage`, `QdrantVectorDBStorage`, `MongoKVStorage`, `MongoDocStatusStorage`, `MongoVectorDBStorage`, `MongoGraphStorage`, `PGGraphStorage`.
+- **For relational databases, data isolation is achieved by adding a `workspace` field to the tables for logical data separation:** `PGKVStorage`, `PGVectorStorage`, `PGDocStatusStorage`.
+- **For the Neo4j graph database, logical data isolation is achieved through labels:** `Neo4JStorage`
+
+To maintain compatibility with legacy data, the default workspace for PostgreSQL is `default` and for Neo4j is `base` when no workspace is configured. For all external storages, the system provides dedicated workspace environment variables to override the common `WORKSPACE` environment variable configuration. These storage-specific workspace environment variables are: `REDIS_WORKSPACE`, `MILVUS_WORKSPACE`, `QDRANT_WORKSPACE`, `MONGODB_WORKSPACE`, `POSTGRES_WORKSPACE`, `NEO4J_WORKSPACE`.
 
 ## Edit Entities and Relations
 
@@ -988,6 +1060,89 @@ These operations maintain data consistency across both the graph database and ve
 
 </details>
 
+## Delete Functions
+
+LightRAG provides comprehensive deletion capabilities, allowing you to delete documents, entities, and relationships.
+
+<details>
+<summary> <b>Delete Entities</b> </summary>
+
+You can delete entities by their name along with all associated relationships:
+
+```python
+# Delete entity and all its relationships (synchronous version)
+rag.delete_by_entity("Google")
+
+# Asynchronous version
+await rag.adelete_by_entity("Google")
+```
+
+When deleting an entity:
+- Removes the entity node from the knowledge graph
+- Deletes all associated relationships
+- Removes related embedding vectors from the vector database
+- Maintains knowledge graph integrity
+
+</details>
+
+<details>
+<summary> <b>Delete Relations</b> </summary>
+
+You can delete relationships between two specific entities:
+
+```python
+# Delete relationship between two entities (synchronous version)
+rag.delete_by_relation("Google", "Gmail")
+
+# Asynchronous version
+await rag.adelete_by_relation("Google", "Gmail")
+```
+
+When deleting a relationship:
+- Removes the specified relationship edge
+- Deletes the relationship's embedding vector from the vector database
+- Preserves both entity nodes and their other relationships
+
+</details>
+
+<details>
+<summary> <b>Delete by Document ID</b> </summary>
+
+You can delete an entire document and all its related knowledge through document ID:
+
+```python
+# Delete by document ID (asynchronous version)
+await rag.adelete_by_doc_id("doc-12345")
+```
+
+Optimized processing when deleting by document ID:
+- **Smart Cleanup**: Automatically identifies and removes entities and relationships that belong only to this document
+- **Preserve Shared Knowledge**: If entities or relationships exist in other documents, they are preserved and their descriptions are rebuilt
+- **Cache Optimization**: Clears related LLM cache to reduce storage overhead
+- **Incremental Rebuilding**: Reconstructs affected entity and relationship descriptions from remaining documents
+
+The deletion process includes:
+1. Delete all text chunks related to the document
+2. Identify and delete entities and relationships that belong only to this document
+3. Rebuild entities and relationships that still exist in other documents
+4. Update all related vector indexes
+5. Clean up document status records
+
+Note: Deletion by document ID is an asynchronous operation as it involves complex knowledge graph reconstruction processes.
+
+</details>
+
+**Important Reminders:**
+
+1. **Irreversible Operations**: All deletion operations are irreversible, please use with caution
+2. **Performance Considerations**: Deleting large amounts of data may take some time, especially deletion by document ID
+3. **Data Consistency**: Deletion operations automatically maintain consistency between the knowledge graph and vector database
+4. **Backup Recommendations**: Consider backing up data before performing important deletion operations
+
+**Batch Deletion Recommendations:**
+- For batch deletion operations, consider using asynchronous methods for better performance
+- For large-scale deletions, consider processing in batches to avoid excessive system load
+
 ## Entity Merging
 
 <details>
@@ -1076,40 +1231,99 @@ LightRAG now seamlessly integrates with [RAG-Anything](https://github.com/HKUDS/
    pip install raganything
    ```
 2. Process multimodal documents:
-   ```python
-   import asyncio
-   from raganything import RAGAnything
-   from lightrag.llm.openai import openai_complete_if_cache, openai_embed
+    <details>
+    <summary> <b> RAGAnything Usage Example </b></summary>
 
-   async def main():
-       # Initialize RAGAnything with LightRAG integration
-       rag = RAGAnything(
-           working_dir="./rag_storage",
-           llm_model_func=lambda prompt, **kwargs: openai_complete_if_cache(
-               "gpt-4o-mini", prompt, api_key="your-api-key", **kwargs
-           ),
-           embedding_func=lambda texts: openai_embed(
-               texts, model="text-embedding-3-large", api_key="your-api-key"
-           ),
-           embedding_dim=3072,
-       )
+    ```python
+        import asyncio
+        from raganything import RAGAnything
+        from lightrag import LightRAG
+        from lightrag.llm.openai import openai_complete_if_cache, openai_embed
+        from lightrag.utils import EmbeddingFunc
+        import os
 
-       # Process multimodal documents
-       await rag.process_document_complete(
-           file_path="path/to/your/document.pdf",
-           output_dir="./output"
-       )
+        async def load_existing_lightrag():
+            # First, create or load an existing LightRAG instance
+            lightrag_working_dir = "./existing_lightrag_storage"
 
-       # Query multimodal content
-       result = await rag.query_with_multimodal(
-           "What are the main findings shown in the figures and tables?",
-           mode="hybrid"
-       )
-       print(result)
+            # Check if previous LightRAG instance exists
+            if os.path.exists(lightrag_working_dir) and os.listdir(lightrag_working_dir):
+                print("✅ Found existing LightRAG instance, loading...")
+            else:
+                print("❌ No existing LightRAG instance found, will create new one")
 
-   if __name__ == "__main__":
-       asyncio.run(main())
-   ```
+            # Create/Load LightRAG instance with your configurations
+            lightrag_instance = LightRAG(
+                working_dir=lightrag_working_dir,
+                llm_model_func=lambda prompt, system_prompt=None, history_messages=[], **kwargs: openai_complete_if_cache(
+                    "gpt-4o-mini",
+                    prompt,
+                    system_prompt=system_prompt,
+                    history_messages=history_messages,
+                    api_key="your-api-key",
+                    **kwargs,
+                ),
+                embedding_func=EmbeddingFunc(
+                    embedding_dim=3072,
+                    max_token_size=8192,
+                    func=lambda texts: openai_embed(
+                        texts,
+                        model="text-embedding-3-large",
+                        api_key=api_key,
+                        base_url=base_url,
+                    ),
+                )
+            )
+
+            # Initialize storage (this will load existing data if available)
+            await lightrag_instance.initialize_storages()
+
+            # Now initialize RAGAnything with the existing LightRAG instance
+            rag = RAGAnything(
+                lightrag=lightrag_instance,  # Pass the existing LightRAG instance
+                # Only need vision model for multimodal processing
+                vision_model_func=lambda prompt, system_prompt=None, history_messages=[], image_data=None, **kwargs: openai_complete_if_cache(
+                    "gpt-4o",
+                    "",
+                    system_prompt=None,
+                    history_messages=[],
+                    messages=[
+                        {"role": "system", "content": system_prompt} if system_prompt else None,
+                        {"role": "user", "content": [
+                            {"type": "text", "text": prompt},
+                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_data}"}}
+                        ]} if image_data else {"role": "user", "content": prompt}
+                    ],
+                    api_key="your-api-key",
+                    **kwargs,
+                ) if image_data else openai_complete_if_cache(
+                    "gpt-4o-mini",
+                    prompt,
+                    system_prompt=system_prompt,
+                    history_messages=history_messages,
+                    api_key="your-api-key",
+                    **kwargs,
+                )
+                # Note: working_dir, llm_model_func, embedding_func, etc. are inherited from lightrag_instance
+            )
+
+            # Query the existing knowledge base
+            result = await rag.query_with_multimodal(
+                "What data has been processed in this LightRAG instance?",
+                mode="hybrid"
+            )
+            print("Query result:", result)
+
+            # Add new multimodal documents to the existing LightRAG instance
+            await rag.process_document_complete(
+                file_path="path/to/new/multimodal_document.pdf",
+                output_dir="./output"
+            )
+
+        if __name__ == "__main__":
+            asyncio.run(load_existing_lightrag())
+    ```
+    </details>
 
 For detailed documentation and advanced usage, please refer to the [RAG-Anything repository](https://github.com/HKUDS/RAG-Anything).
 
@@ -1253,6 +1467,33 @@ Valid modes are:
 - `"mix"`: Mix search cache
 
 </details>
+
+## Troubleshooting
+
+### Common Initialization Errors
+
+If you encounter these errors when using LightRAG:
+
+1. **`AttributeError: __aenter__`**
+   - **Cause**: Storage backends not initialized
+   - **Solution**: Call `await rag.initialize_storages()` after creating the LightRAG instance
+
+2. **`KeyError: 'history_messages'`**
+   - **Cause**: Pipeline status not initialized
+   - **Solution**: Call `await initialize_pipeline_status()` after initializing storages
+
+3. **Both errors in sequence**
+   - **Cause**: Neither initialization method was called
+   - **Solution**: Always follow this pattern:
+   ```python
+   rag = LightRAG(...)
+   await rag.initialize_storages()
+   await initialize_pipeline_status()
+   ```
+
+### Model Switching Issues
+
+When switching between different embedding models, you must clear the data directory to avoid errors. The only file you may want to preserve is `kv_store_llm_response_cache.json` if you wish to retain the LLM cache.
 
 ## LightRAG API
 
@@ -1519,7 +1760,47 @@ def extract_queries(file_path):
 
 </details>
 
-## Star History
+## 🔗 Related Projects
+
+*Ecosystem & Extensions*
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/HKUDS/RAG-Anything">
+          <div style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%); border-radius: 15px; border: 1px solid rgba(0, 217, 255, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+            <span style="font-size: 32px;">📸</span>
+          </div>
+          <b>RAG-Anything</b><br>
+          <sub>Multimodal RAG</sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/HKUDS/VideoRAG">
+          <div style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%); border-radius: 15px; border: 1px solid rgba(0, 217, 255, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+            <span style="font-size: 32px;">🎥</span>
+          </div>
+          <b>VideoRAG</b><br>
+          <sub>Extreme Long-Context Video RAG</sub>
+        </a>
+      </td>
+      <td align="center">
+        <a href="https://github.com/HKUDS/MiniRAG">
+          <div style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%); border-radius: 15px; border: 1px solid rgba(0, 217, 255, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+            <span style="font-size: 32px;">✨</span>
+          </div>
+          <b>MiniRAG</b><br>
+          <sub>Extremely Simple RAG</sub>
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## ⭐ Star History
 
 <a href="https://star-history.com/#HKUDS/LightRAG&Date">
  <picture>
@@ -1529,42 +1810,22 @@ def extract_queries(file_path):
  </picture>
 </a>
 
-## Contribution
+## 🤝 Contribution
 
-Thank you to all our contributors!
+<div align="center">
+  We thank all our contributors for their valuable contributions.
+</div>
 
-<a href="https://github.com/HKUDS/LightRAG/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=HKUDS/LightRAG" />
-</a>
+<div align="center">
+  <a href="https://github.com/HKUDS/LightRAG/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=HKUDS/LightRAG" style="border-radius: 15px; box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);" />
+  </a>
+</div>
 
-## Troubleshooting
+---
 
-### Common Initialization Errors
 
-If you encounter these errors when using LightRAG:
-
-1. **`AttributeError: __aenter__`**
-   - **Cause**: Storage backends not initialized
-   - **Solution**: Call `await rag.initialize_storages()` after creating the LightRAG instance
-
-2. **`KeyError: 'history_messages'`**
-   - **Cause**: Pipeline status not initialized
-   - **Solution**: Call `await initialize_pipeline_status()` after initializing storages
-
-3. **Both errors in sequence**
-   - **Cause**: Neither initialization method was called
-   - **Solution**: Always follow this pattern:
-   ```python
-   rag = LightRAG(...)
-   await rag.initialize_storages()
-   await initialize_pipeline_status()
-   ```
-
-### Model Switching Issues
-
-When switching between different embedding models, you must clear the data directory to avoid errors. The only file you may want to preserve is `kv_store_llm_response_cache.json` if you wish to retain the LLM cache.
-
-## 🌟Citation
+## 📖 Citation
 
 ```python
 @article{guo2024lightrag,
@@ -1577,4 +1838,31 @@ primaryClass={cs.IR}
 }
 ```
 
-**Thank you for your interest in our work!**
+---
+
+<div align="center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; padding: 30px; margin: 30px 0;">
+  <div>
+    <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="500">
+  </div>
+  <div style="margin-top: 20px;">
+    <a href="https://github.com/HKUDS/LightRAG" style="text-decoration: none;">
+      <img src="https://img.shields.io/badge/⭐%20Star%20us%20on%20GitHub-1a1a2e?style=for-the-badge&logo=github&logoColor=white">
+    </a>
+    <a href="https://github.com/HKUDS/LightRAG/issues" style="text-decoration: none;">
+      <img src="https://img.shields.io/badge/🐛%20Report%20Issues-ff6b6b?style=for-the-badge&logo=github&logoColor=white">
+    </a>
+    <a href="https://github.com/HKUDS/LightRAG/discussions" style="text-decoration: none;">
+      <img src="https://img.shields.io/badge/💬%20Discussions-4ecdc4?style=for-the-badge&logo=github&logoColor=white">
+    </a>
+  </div>
+</div>
+
+<div align="center">
+  <div style="width: 100%; max-width: 600px; margin: 20px auto; padding: 20px; background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(0, 217, 255, 0.05) 100%); border-radius: 15px; border: 1px solid rgba(0, 217, 255, 0.2);">
+    <div style="display: flex; justify-content: center; align-items: center; gap: 15px;">
+      <span style="font-size: 24px;">⭐</span>
+      <span style="color: #00d9ff; font-size: 18px;">Thank you for visiting LightRAG!</span>
+      <span style="font-size: 24px;">⭐</span>
+    </div>
+  </div>
+</div>
