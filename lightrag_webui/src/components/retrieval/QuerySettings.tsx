@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { QueryMode, QueryRequest } from '@/api/lightrag'
 // Removed unused import for Text component
 import Checkbox from '@/components/ui/Checkbox'
-import NumberInput from '@/components/ui/NumberInput'
 import Input from '@/components/ui/Input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import {
@@ -120,97 +119,164 @@ export default function QuerySettings() {
                 </Tooltip>
               </TooltipProvider>
               <div>
-                {/* Removed sr-only label */}
-                <NumberInput
+                <Input
                   id="top_k"
-                  stepper={1}
-                  value={querySettings.top_k}
-                  onValueChange={(v) => handleChange('top_k', v)}
+                  type="number"
+                  value={querySettings.top_k ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    handleChange('top_k', value === '' ? '' : parseInt(value) || 0)
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(parseInt(value))) {
+                      handleChange('top_k', 1)
+                    }
+                  }}
                   min={1}
                   placeholder={t('retrievePanel.querySettings.topKPlaceholder')}
                 />
               </div>
             </>
 
-            {/* Max Tokens */}
+            {/* Chunk Top K */}
             <>
-              <>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label htmlFor="max_token_for_text_unit" className="ml-1 cursor-help">
-                        {t('retrievePanel.querySettings.maxTokensTextUnit')}
-                      </label>
-                    </TooltipTrigger>
-                    <TooltipContent side="left">
-                      <p>{t('retrievePanel.querySettings.maxTokensTextUnitTooltip')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <div>
-                  {/* Removed sr-only label */}
-                  <NumberInput
-                    id="max_token_for_text_unit"
-                    stepper={500}
-                    value={querySettings.max_token_for_text_unit}
-                    onValueChange={(v) => handleChange('max_token_for_text_unit', v)}
-                    min={1}
-                    placeholder={t('retrievePanel.querySettings.maxTokensTextUnit')}
-                  />
-                </div>
-              </>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <label htmlFor="chunk_top_k" className="ml-1 cursor-help">
+                      {t('retrievePanel.querySettings.chunkTopK')}
+                    </label>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    <p>{t('retrievePanel.querySettings.chunkTopKTooltip')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div>
+                <Input
+                  id="chunk_top_k"
+                  type="number"
+                  value={querySettings.chunk_top_k ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    handleChange('chunk_top_k', value === '' ? '' : parseInt(value) || 0)
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(parseInt(value))) {
+                      handleChange('chunk_top_k', 1)
+                    }
+                  }}
+                  min={1}
+                  placeholder={t('retrievePanel.querySettings.chunkTopKPlaceholder')}
+                />
+              </div>
+            </>
 
-              <>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label htmlFor="max_token_for_global_context" className="ml-1 cursor-help">
-                        {t('retrievePanel.querySettings.maxTokensGlobalContext')}
-                      </label>
-                    </TooltipTrigger>
-                    <TooltipContent side="left">
-                      <p>{t('retrievePanel.querySettings.maxTokensGlobalContextTooltip')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <div>
-                  {/* Removed sr-only label */}
-                  <NumberInput
-                    id="max_token_for_global_context"
-                    stepper={500}
-                    value={querySettings.max_token_for_global_context}
-                    onValueChange={(v) => handleChange('max_token_for_global_context', v)}
-                    min={1}
-                    placeholder={t('retrievePanel.querySettings.maxTokensGlobalContext')}
-                  />
-                </div>
-              </>
+            {/* Max Entity Tokens */}
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <label htmlFor="max_entity_tokens" className="ml-1 cursor-help">
+                      {t('retrievePanel.querySettings.maxEntityTokens')}
+                    </label>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    <p>{t('retrievePanel.querySettings.maxEntityTokensTooltip')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div>
+                <Input
+                  id="max_entity_tokens"
+                  type="number"
+                  value={querySettings.max_entity_tokens ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    handleChange('max_entity_tokens', value === '' ? '' : parseInt(value) || 0)
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(parseInt(value))) {
+                      handleChange('max_entity_tokens', 1000)
+                    }
+                  }}
+                  min={1}
+                  placeholder={t('retrievePanel.querySettings.maxEntityTokensPlaceholder')}
+                />
+              </div>
+            </>
 
-              <>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label htmlFor="max_token_for_local_context" className="ml-1 cursor-help">
-                        {t('retrievePanel.querySettings.maxTokensLocalContext')}
-                      </label>
-                    </TooltipTrigger>
-                    <TooltipContent side="left">
-                      <p>{t('retrievePanel.querySettings.maxTokensLocalContextTooltip')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <div>
-                  {/* Removed sr-only label */}
-                  <NumberInput
-                    id="max_token_for_local_context"
-                    stepper={500}
-                    value={querySettings.max_token_for_local_context}
-                    onValueChange={(v) => handleChange('max_token_for_local_context', v)}
-                    min={1}
-                    placeholder={t('retrievePanel.querySettings.maxTokensLocalContext')}
-                  />
-                </div>
-              </>
+            {/* Max Relation Tokens */}
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <label htmlFor="max_relation_tokens" className="ml-1 cursor-help">
+                      {t('retrievePanel.querySettings.maxRelationTokens')}
+                    </label>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    <p>{t('retrievePanel.querySettings.maxRelationTokensTooltip')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div>
+                <Input
+                  id="max_relation_tokens"
+                  type="number"
+                  value={querySettings.max_relation_tokens ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    handleChange('max_relation_tokens', value === '' ? '' : parseInt(value) || 0)
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(parseInt(value))) {
+                      handleChange('max_relation_tokens', 1000)
+                    }
+                  }}
+                  min={1}
+                  placeholder={t('retrievePanel.querySettings.maxRelationTokensPlaceholder')}
+                />
+              </div>
+            </>
+
+            {/* Max Total Tokens */}
+            <>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <label htmlFor="max_total_tokens" className="ml-1 cursor-help">
+                      {t('retrievePanel.querySettings.maxTotalTokens')}
+                    </label>
+                  </TooltipTrigger>
+                  <TooltipContent side="left">
+                    <p>{t('retrievePanel.querySettings.maxTotalTokensTooltip')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <div>
+                <Input
+                  id="max_total_tokens"
+                  type="number"
+                  value={querySettings.max_total_tokens ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    handleChange('max_total_tokens', value === '' ? '' : parseInt(value) || 0)
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(parseInt(value))) {
+                      handleChange('max_total_tokens', 1000)
+                    }
+                  }}
+                  min={1}
+                  placeholder={t('retrievePanel.querySettings.maxTotalTokensPlaceholder')}
+                />
+              </div>
             </>
 
             {/* History Turns */}
@@ -228,16 +294,23 @@ export default function QuerySettings() {
                 </Tooltip>
               </TooltipProvider>
               <div>
-                {/* Removed sr-only label */}
-                <NumberInput
-                  className="!border-input"
+                <Input
                   id="history_turns"
-                  stepper={1}
-                  type="text"
-                  value={querySettings.history_turns}
-                  onValueChange={(v) => handleChange('history_turns', v)}
+                  type="number"
+                  value={querySettings.history_turns ?? ''}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    handleChange('history_turns', value === '' ? '' : parseInt(value) || 0)
+                  }}
+                  onBlur={(e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(parseInt(value))) {
+                      handleChange('history_turns', 0)
+                    }
+                  }}
                   min={0}
                   placeholder={t('retrievePanel.querySettings.historyTurnsPlaceholder')}
+                  className="h-9"
                 />
               </div>
             </>
@@ -269,6 +342,27 @@ export default function QuerySettings() {
 
             {/* Toggle Options */}
             <>
+              <div className="flex items-center gap-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <label htmlFor="enable_rerank" className="flex-1 ml-1 cursor-help">
+                        {t('retrievePanel.querySettings.enableRerank')}
+                      </label>
+                    </TooltipTrigger>
+                    <TooltipContent side="left">
+                      <p>{t('retrievePanel.querySettings.enableRerankTooltip')}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <Checkbox
+                  className="mr-1 cursor-pointer"
+                  id="enable_rerank"
+                  checked={querySettings.enable_rerank}
+                  onCheckedChange={(checked) => handleChange('enable_rerank', checked)}
+                />
+              </div>
+
               <div className="flex items-center gap-2">
                 <TooltipProvider>
                   <Tooltip>
@@ -332,6 +426,7 @@ export default function QuerySettings() {
                 />
               </div>
             </>
+
           </div>
         </div>
       </CardContent>

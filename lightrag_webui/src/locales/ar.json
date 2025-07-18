@@ -56,6 +56,32 @@
       "failed": "فشل مسح المستندات:\n{{message}}",
       "error": "فشل مسح المستندات:\n{{error}}"
     },
+    "deleteDocuments": {
+      "button": "حذف",
+      "tooltip": "حذف المستندات المحددة",
+      "title": "حذف المستندات",
+      "description": "سيؤدي هذا إلى حذف المستندات المحددة نهائيًا من النظام",
+      "warning": "تحذير: سيؤدي هذا الإجراء إلى حذف المستندات المحددة نهائيًا ولا يمكن التراجع عنه!",
+      "confirm": "هل تريد حقًا حذف {{count}} مستند(ات) محدد(ة)؟",
+      "confirmPrompt": "اكتب 'yes' لتأكيد هذا الإجراء",
+      "confirmPlaceholder": "اكتب yes للتأكيد",
+      "confirmButton": "نعم",
+      "deleteFileOption": "حذف الملفات المرفوعة أيضًا",
+      "deleteFileTooltip": "حدد هذا الخيار لحذف الملفات المرفوعة المقابلة على الخادم أيضًا",
+      "success": "تم بدء تشغيل خط معالجة حذف المستندات بنجاح",
+      "failed": "فشل حذف المستندات:\n{{message}}",
+      "error": "فشل حذف المستندات:\n{{error}}",
+      "busy": "خط المعالجة مشغول، يرجى المحاولة مرة أخرى لاحقًا",
+      "notAllowed": "لا توجد صلاحية لتنفيذ هذه العملية",
+      "cannotDeleteAll": "لا يمكن حذف جميع المستندات. إذا كنت بحاجة لحذف جميع المستندات، يرجى استخدام ميزة مسح المستندات."
+    },
+    "deselectDocuments": {
+      "button": "إلغاء التحديد",
+      "tooltip": "إلغاء تحديد جميع المستندات المحددة",
+      "title": "إلغاء تحديد المستندات",
+      "description": "سيؤدي هذا إلى مسح جميع المستندات المحددة ({{count}} محدد)",
+      "confirmButton": "إلغاء تحديد الكل"
+    },
     "uploadDocuments": {
       "button": "رفع",
       "tooltip": "رفع المستندات",
@@ -105,7 +131,8 @@
         "chunks": "الأجزاء",
         "created": "تم الإنشاء",
         "updated": "تم التحديث",
-        "metadata": "البيانات الوصفية"
+        "metadata": "البيانات الوصفية",
+        "select": "اختيار"
       },
       "status": {
         "all": "الكل",
@@ -225,18 +252,24 @@
       "inputDirectory": "دليل الإدخال",
       "llmConfig": "تكوين نموذج اللغة الكبير",
       "llmBinding": "ربط نموذج اللغة الكبير",
-      "llmBindingHost": "مضيف ربط نموذج اللغة الكبير",
+      "llmBindingHost": "نقطة نهاية نموذج اللغة الكبير",
       "llmModel": "نموذج اللغة الكبير",
       "maxTokens": "أقصى عدد من الرموز",
       "embeddingConfig": "تكوين التضمين",
       "embeddingBinding": "ربط التضمين",
-      "embeddingBindingHost": "مضيف ربط التضمين",
+      "embeddingBindingHost": "نقطة نهاية التضمين",
       "embeddingModel": "نموذج التضمين",
       "storageConfig": "تكوين التخزين",
       "kvStorage": "تخزين المفتاح-القيمة",
       "docStatusStorage": "تخزين حالة المستند",
       "graphStorage": "تخزين الرسم البياني",
-      "vectorStorage": "تخزين المتجهات"
+      "vectorStorage": "تخزين المتجهات",
+      "workspace": "مساحة العمل",
+      "maxGraphNodes": "الحد الأقصى لعقد الرسم البياني",
+      "rerankerConfig": "تكوين إعادة الترتيب",
+      "rerankerBindingHost": "نقطة نهاية إعادة الترتيب",
+      "rerankerModel": "نموذج إعادة الترتيب",
+      "lockStatus": "حالة القفل"
     },
     "propertiesView": {
       "editProperty": "تعديل {{property}}",
@@ -330,16 +363,19 @@
         "singleParagraph": "فقرة واحدة",
         "bulletPoints": "نقاط نقطية"
       },
-      "topK": "أعلى K نتائج",
-      "topKTooltip": "عدد العناصر العلوية للاسترجاع. يمثل الكيانات في وضع 'محلي' والعلاقات في وضع 'عالمي'",
-      "topKPlaceholder": "عدد النتائج",
-      "maxTokensTextUnit": "أقصى عدد من الرموز لوحدة النص",
-      "maxTokensTextUnitTooltip": "الحد الأقصى لعدد الرموز المسموح به لكل جزء نصي مسترجع",
-      "maxTokensGlobalContext": "أقصى عدد من الرموز للسياق العالمي",
-      "maxTokensGlobalContextTooltip": "الحد الأقصى لعدد الرموز المخصص لأوصاف العلاقات في الاسترجاع العالمي",
-      "maxTokensLocalContext": "أقصى عدد من الرموز للسياق المحلي",
-      "maxTokensLocalContextTooltip": "الحد الأقصى لعدد الرموز المخصص لأوصاف الكيانات في الاسترجاع المحلي",
-      "historyTurns": "دورات التاريخ",
+      "topK": "KG أعلى K",
+      "topKTooltip": "عدد الكيانات والعلاقات المطلوب استردادها، لا ينطبق على الوضع наивный.",
+      "topKPlaceholder": "أدخل قيمة top_k",
+      "chunkTopK": "أعلى K للقطع",
+      "chunkTopKTooltip": "عدد أجزاء النص المطلوب استردادها، وينطبق على جميع الأوضاع.",
+      "chunkTopKPlaceholder": "أدخل قيمة chunk_top_k",
+      "maxEntityTokens": "الحد الأقصى لرموز الكيان",
+      "maxEntityTokensTooltip": "الحد الأقصى لعدد الرموز المخصصة لسياق الكيان في نظام التحكم الموحد في الرموز",
+      "maxRelationTokens": "الحد الأقصى لرموز العلاقة",
+      "maxRelationTokensTooltip": "الحد الأقصى لعدد الرموز المخصصة لسياق العلاقة في نظام التحكم الموحد في الرموز",
+      "maxTotalTokens": "إجمالي الحد الأقصى للرموز",
+      "maxTotalTokensTooltip": "الحد الأقصى الإجمالي لميزانية الرموز لسياق الاستعلام بالكامل (الكيانات + العلاقات + الأجزاء + موجه النظام)",
+      "historyTurns": "أدوار التاريخ",
       "historyTurnsTooltip": "عدد الدورات الكاملة للمحادثة (أزواج المستخدم-المساعد) التي يجب مراعاتها في سياق الرد",
       "historyTurnsPlaceholder": "عدد دورات التاريخ",
       "onlyNeedContext": "تحتاج فقط إلى السياق",
@@ -350,7 +386,9 @@
       "streamResponseTooltip": "إذا كان صحيحًا، يتيح إخراج التدفق للردود في الوقت الفعلي",
       "userPrompt": "مطالبة مخصصة",
       "userPromptTooltip": "تقديم متطلبات استجابة إضافية إلى نموذج اللغة الكبير (غير متعلقة بمحتوى الاستعلام، فقط لمعالجة المخرجات).",
-      "userPromptPlaceholder": "أدخل مطالبة مخصصة (اختياري)"
+      "userPromptPlaceholder": "أدخل مطالبة مخصصة (اختياري)",
+      "enableRerank": "تمكين إعادة الترتيب",
+      "enableRerankTooltip": "تمكين إعادة ترتيب أجزاء النص المسترجعة. إذا كان True ولكن لم يتم تكوين نموذج إعادة الترتيب، فسيتم إصدار تحذير. افتراضي True."
     }
   },
   "apiSite": {
