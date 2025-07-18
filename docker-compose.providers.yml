@@ -1,0 +1,293 @@
+version: '3.8'
+
+services:
+  # Separate PostgreSQL instances for each provider
+  postgres-openai:
+    image: pgvector/pgvector:pg16
+    container_name: lightrag-postgres-openai
+    environment:
+      POSTGRES_DB: lightrag_openai
+      POSTGRES_USER: lightrag_openai_user
+      POSTGRES_PASSWORD: lightrag_openai_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_openai_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lightrag_openai_user -d lightrag_openai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lightrag-network
+
+  postgres-anthropic:
+    image: pgvector/pgvector:pg16
+    container_name: lightrag-postgres-anthropic
+    environment:
+      POSTGRES_DB: lightrag_anthropic
+      POSTGRES_USER: lightrag_anthropic_user
+      POSTGRES_PASSWORD: lightrag_anthropic_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_anthropic_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lightrag_anthropic_user -d lightrag_anthropic"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lightrag-network
+
+  postgres-gemini:
+    image: pgvector/pgvector:pg16
+    container_name: lightrag-postgres-gemini
+    environment:
+      POSTGRES_DB: lightrag_gemini
+      POSTGRES_USER: lightrag_gemini_user
+      POSTGRES_PASSWORD: lightrag_gemini_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_gemini_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lightrag_gemini_user -d lightrag_gemini"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lightrag-network
+
+  postgres-ollama:
+    image: pgvector/pgvector:pg16
+    container_name: lightrag-postgres-ollama
+    environment:
+      POSTGRES_DB: lightrag_ollama
+      POSTGRES_USER: lightrag_ollama_user
+      POSTGRES_PASSWORD: lightrag_ollama_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_ollama_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lightrag_ollama_user -d lightrag_ollama"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lightrag-network
+
+  postgres-openai-compatible:
+    image: pgvector/pgvector:pg16
+    container_name: lightrag-postgres-openai-compatible
+    environment:
+      POSTGRES_DB: lightrag_openai_compatible
+      POSTGRES_USER: lightrag_openai_compatible_user
+      POSTGRES_PASSWORD: lightrag_openai_compatible_pass
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_openai_compatible_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lightrag_openai_compatible_user -d lightrag_openai_compatible"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lightrag-network
+
+  # OpenAI Provider Instance
+  lightrag-openai:
+    image: ghcr.io/hkuds/lightrag:1.3.8
+    container_name: lightrag-openai
+    env_file:
+      - .env.openai
+    environment:
+      # OpenAI API key from .env file
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLM_BINDING_API_KEY: ${OPENAI_API_KEY}
+      EMBEDDING_BINDING_API_KEY: ${OPENAI_API_KEY}
+      # Storage configuration - using PostgreSQL for vectors and KV, NetworkX for graph
+      LIGHTRAG_KV_STORAGE: PGKVStorage
+      LIGHTRAG_VECTOR_STORAGE: PGVectorStorage
+      LIGHTRAG_DOC_STATUS_STORAGE: PGDocStatusStorage
+      LIGHTRAG_GRAPH_STORAGE: NetworkXStorage
+      # PostgreSQL connection - dedicated instance
+      POSTGRES_HOST: postgres-openai
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: lightrag_openai_user
+      POSTGRES_PASSWORD: lightrag_openai_pass
+      POSTGRES_DATABASE: lightrag_openai
+    ports:
+      - "9621:9621"
+    depends_on:
+      postgres-openai:
+        condition: service_healthy
+    volumes:
+      - ./data/openai/inputs:/app/inputs
+      - ./data/openai/rag_storage:/app/rag_storage
+    networks:
+      - lightrag-network
+
+  # Anthropic Provider Instance
+  lightrag-anthropic:
+    image: ghcr.io/hkuds/lightrag:1.3.8
+    container_name: lightrag-anthropic
+    env_file:
+      - .env.anthropic
+    environment:
+      # Anthropic API key from .env file
+      OPENAI_API_KEY: ${ANTHROPIC_API_KEY}
+      LLM_BINDING_API_KEY: ${ANTHROPIC_API_KEY}
+      EMBEDDING_BINDING_API_KEY: ${OPENAI_API_KEY}
+      # Storage configuration - using PostgreSQL for vectors and KV, NetworkX for graph
+      LIGHTRAG_KV_STORAGE: PGKVStorage
+      LIGHTRAG_VECTOR_STORAGE: PGVectorStorage
+      LIGHTRAG_DOC_STATUS_STORAGE: PGDocStatusStorage
+      LIGHTRAG_GRAPH_STORAGE: NetworkXStorage
+      # PostgreSQL connection - dedicated instance
+      POSTGRES_HOST: postgres-anthropic
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: lightrag_anthropic_user
+      POSTGRES_PASSWORD: lightrag_anthropic_pass
+      POSTGRES_DATABASE: lightrag_anthropic
+    ports:
+      - "9622:9621"
+    depends_on:
+      postgres-anthropic:
+        condition: service_healthy
+    volumes:
+      - ./data/anthropic/inputs:/app/inputs
+      - ./data/anthropic/rag_storage:/app/rag_storage
+    networks:
+      - lightrag-network
+
+  # Gemini Provider Instance
+  lightrag-gemini:
+    image: ghcr.io/hkuds/lightrag:1.3.8
+    container_name: lightrag-gemini
+    env_file:
+      - .env.gemini
+    environment:
+      # Gemini API key from .env file
+      OPENAI_API_KEY: ${GEMINI_API_KEY}
+      LLM_BINDING_API_KEY: ${GEMINI_API_KEY}
+      EMBEDDING_BINDING_API_KEY: ${OPENAI_API_KEY}
+      # Storage configuration - using PostgreSQL for vectors and KV, NetworkX for graph
+      LIGHTRAG_KV_STORAGE: PGKVStorage
+      LIGHTRAG_VECTOR_STORAGE: PGVectorStorage
+      LIGHTRAG_DOC_STATUS_STORAGE: PGDocStatusStorage
+      LIGHTRAG_GRAPH_STORAGE: NetworkXStorage
+      # PostgreSQL connection - dedicated instance
+      POSTGRES_HOST: postgres-gemini
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: lightrag_gemini_user
+      POSTGRES_PASSWORD: lightrag_gemini_pass
+      POSTGRES_DATABASE: lightrag_gemini
+    ports:
+      - "9623:9621"
+    depends_on:
+      postgres-gemini:
+        condition: service_healthy
+    volumes:
+      - ./data/gemini/inputs:/app/inputs
+      - ./data/gemini/rag_storage:/app/rag_storage
+    networks:
+      - lightrag-network
+
+  # Ollama Provider Instance
+  ollama:
+    image: ollama/ollama:latest
+    container_name: lightrag-ollama-server
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - lightrag-network
+    restart: unless-stopped
+
+  lightrag-ollama:
+    image: ghcr.io/hkuds/lightrag:1.3.8
+    container_name: lightrag-ollama
+    env_file:
+      - .env.ollama
+    environment:
+      # No API key needed for Ollama
+      OPENAI_API_KEY: ""
+      LLM_BINDING_API_KEY: ""
+      EMBEDDING_BINDING_API_KEY: ""
+      # Storage configuration - using PostgreSQL for vectors and KV, NetworkX for graph
+      LIGHTRAG_KV_STORAGE: PGKVStorage
+      LIGHTRAG_VECTOR_STORAGE: PGVectorStorage
+      LIGHTRAG_DOC_STATUS_STORAGE: PGDocStatusStorage
+      LIGHTRAG_GRAPH_STORAGE: NetworkXStorage
+      # PostgreSQL connection - dedicated instance
+      POSTGRES_HOST: postgres-ollama
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: lightrag_ollama_user
+      POSTGRES_PASSWORD: lightrag_ollama_pass
+      POSTGRES_DATABASE: lightrag_ollama
+    ports:
+      - "9624:9621"
+    depends_on:
+      postgres-ollama:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    volumes:
+      - ./data/ollama/inputs:/app/inputs
+      - ./data/ollama/rag_storage:/app/rag_storage
+    networks:
+      - lightrag-network
+
+  # OpenAI Compatible Provider Instance
+  lightrag-openai-compatible:
+    image: ghcr.io/hkuds/lightrag:1.3.8
+    container_name: lightrag-openai-compatible
+    env_file:
+      - .env.openai-compatible
+    environment:
+      # No API key needed for OpenAI compatible (or custom key)
+      OPENAI_API_KEY: ""
+      LLM_BINDING_API_KEY: ""
+      EMBEDDING_BINDING_API_KEY: ""
+      # Storage configuration - using PostgreSQL for vectors and KV, NetworkX for graph
+      LIGHTRAG_KV_STORAGE: PGKVStorage
+      LIGHTRAG_VECTOR_STORAGE: PGVectorStorage
+      LIGHTRAG_DOC_STATUS_STORAGE: PGDocStatusStorage
+      LIGHTRAG_GRAPH_STORAGE: NetworkXStorage
+      # PostgreSQL connection - dedicated instance
+      POSTGRES_HOST: postgres-openai-compatible
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: lightrag_openai_compatible_user
+      POSTGRES_PASSWORD: lightrag_openai_compatible_pass
+      POSTGRES_DATABASE: lightrag_openai_compatible
+    ports:
+      - "9625:9621"
+    depends_on:
+      postgres-openai-compatible:
+        condition: service_healthy
+    volumes:
+      - ./data/openai-compatible/inputs:/app/inputs
+      - ./data/openai-compatible/rag_storage:/app/rag_storage
+    networks:
+      - lightrag-network
+
+volumes:
+  postgres_openai_data:
+  postgres_anthropic_data:
+  postgres_gemini_data:
+  postgres_ollama_data:
+  postgres_openai_compatible_data:
+  ollama_data:
+
+networks:
+  lightrag-network:
+    driver: bridge
