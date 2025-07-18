@@ -104,6 +104,140 @@ docker compose up
 
 > Historical versions of LightRAG docker images can be found here: [LightRAG Docker Images]( https://github.com/HKUDS/LightRAG/pkgs/container/lightrag)
 
+## 🚀 Deployment Stack Management
+
+LightRAG includes a comprehensive deployment script (`deploy-stacks.sh`) that supports multiple deployment configurations for different use cases, including testing with various LLM providers.
+
+### Available Deployment Stacks
+
+Use the deployment script to manage different LightRAG configurations:
+
+```bash
+# Show all available stacks
+./deploy-stacks.sh list
+
+# Deploy a specific stack
+./deploy-stacks.sh deploy <stack-name>
+
+# Stop a running stack
+./deploy-stacks.sh stop <stack-name>
+
+# Clean up stack (removes all data)
+./deploy-stacks.sh cleanup <stack-name>
+```
+
+### Stack Configurations
+
+- **📚 development** - File-based storage, perfect for development
+- **💰 minimal** - PostgreSQL-based, single database  
+- **🎯 balanced** - Mixed storage, good performance/complexity balance
+- **🏆 high-performance** - Specialized databases, maximum performance
+- **🐳 all-in-one** - Cloud-native, containerized services
+- **🔧 providers** - All provider testing instances (5 different LLM providers)
+
+### Provider Testing Stack
+
+The `providers` stack deploys multiple LightRAG instances for testing different LLM providers simultaneously:
+
+```bash
+# Deploy all provider instances
+./deploy-stacks.sh deploy providers
+```
+
+This creates 5 separate LightRAG instances, each with its own PostgreSQL database:
+
+| Provider | Web UI Port | PostgreSQL Port | Description |
+|----------|-------------|-----------------|-------------|
+| 🤖 **OpenAI** | 9621 | 5432 | OpenAI GPT models |
+| 🧠 **Anthropic** | 9622 | 5433 | Claude models |
+| 🔮 **Gemini** | 9623 | 5434 | Google Gemini models |
+| 🦙 **Ollama** | 9624 | 5435 | Local open-source models |
+| 🔌 **OpenAI-compatible** | 9625 | 5436 | Custom OpenAI-compatible APIs |
+
+### Provider Configuration
+
+Each provider instance uses its own `.env` file for configuration:
+
+- `.env.openai` - OpenAI API configuration
+- `.env.anthropic` - Anthropic API configuration  
+- `.env.gemini` - Google Gemini API configuration
+- `.env.ollama` - Ollama local model configuration
+- `.env.openai-compatible` - Custom OpenAI-compatible API configuration
+
+#### Example OpenAI Configuration (`.env.openai`)
+```bash
+# OpenAI Provider Configuration
+OPENAI_API_KEY=sk-your-openai-api-key-here
+LLM_BINDING=openai
+LLM_MODEL=gpt-4o-mini
+EMBEDDING_BINDING=openai
+EMBEDDING_MODEL=text-embedding-ada-002
+```
+
+#### Example Ollama Configuration (`.env.ollama`)
+```bash
+# Ollama Provider Configuration
+LLM_BINDING=ollama
+LLM_MODEL=llama3.1:8b
+LLM_BINDING_HOST=http://lightrag-ollama-server:11434/api
+EMBEDDING_BINDING=ollama
+EMBEDDING_MODEL=nomic-embed-text
+```
+
+### Quick Start with Provider Testing
+
+1. **Clone and setup:**
+   ```bash
+   git clone https://github.com/HKUDS/LightRAG.git
+   cd LightRAG
+   ```
+
+2. **Configure your API keys:**
+   ```bash
+   # Copy and modify provider-specific .env files
+   cp .env.openai.example .env.openai
+   cp .env.anthropic.example .env.anthropic
+   # ... edit each file with your API keys
+   ```
+
+3. **Deploy all provider instances:**
+   ```bash
+   ./deploy-stacks.sh deploy providers
+   ```
+
+4. **Access different providers:**
+   - OpenAI: http://localhost:9621/webui
+   - Anthropic: http://localhost:9622/webui
+   - Gemini: http://localhost:9623/webui
+   - Ollama: http://localhost:9624/webui
+   - OpenAI-compatible: http://localhost:9625/webui
+
+### Deployment Examples
+
+```bash
+# Deploy development stack for local testing
+./deploy-stacks.sh deploy development
+
+# Deploy minimal stack with PostgreSQL
+./deploy-stacks.sh deploy minimal
+
+# Deploy all provider instances for testing
+./deploy-stacks.sh deploy providers
+
+# Stop the providers stack
+./deploy-stacks.sh stop providers
+
+# Clean up all provider data
+./deploy-stacks.sh cleanup providers
+```
+
+The deployment script automatically:
+- Creates necessary directories
+- Checks for required configuration files
+- Starts services with health checks
+- Displays access URLs for each service
+- Provides troubleshooting information
+
 ### Install  LightRAG Core
 
 * Install from source (Recommend)
