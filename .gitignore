@@ -21,6 +21,7 @@ venv/
 .env.neo4j
 .env.old
 .env.postgres
+.env.openai_compatible
 
 # Build / Distribution
 dist/
