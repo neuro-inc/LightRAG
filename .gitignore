@@ -22,6 +22,12 @@ venv/
 .env.old
 .env.postgres
 .env.openai_compatible
+.env.openai-compatible
+.env.anthropic
+.env.ollama
+.env.gemini
+.env.openai
+
 
 # Build / Distribution
 dist/
