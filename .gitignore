@@ -15,18 +15,8 @@ rag_storage_test/
 .venv/
 env/
 venv/
-.env
-.env.bak
-.env.default
-.env.neo4j
-.env.old
-.env.postgres
-.env.openai_compatible
-.env.openai-compatible
-.env.anthropic
-.env.ollama
-.env.gemini
-.env.openai
+.env*
+!.env.template
 
 
 # Build / Distribution
