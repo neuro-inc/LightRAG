@@ -132,6 +132,7 @@ secrets:
   openaiApiKey: "" # Legacy field, kept for backward compatibility
   llmApiKey: "" # API key for LLM service (e.g., OpenRouter)
   embeddingApiKey: "" # API key for embedding service (e.g., Google Gemini)
+  
 
 # Node selector and affinity
 nodeSelector: {}
