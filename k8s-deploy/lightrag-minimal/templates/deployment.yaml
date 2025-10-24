@@ -77,6 +77,11 @@ spec:
                 secretKeyRef:
                   name: {{ include "lightrag-minimal.secretName" . }}
                   key: embedding-api-key
+            - name: LIGHTRAG_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "lightrag-minimal.secretName" . }}
+                  key: lightrag-api-key
             
             # Storage configuration
             - name: LIGHTRAG_KV_STORAGE
