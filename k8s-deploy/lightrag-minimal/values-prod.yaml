@@ -68,6 +68,7 @@ postgresql:
 # OpenAI API key (use external secret manager in production)
 secrets:
   openaiApiKey: "${OPENAI_API_KEY}"
+  lightragApiKey: "${LIGHTRAG_API_KEY}"
 
 # Enable ingress for production
 ingress:

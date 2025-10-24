@@ -65,6 +65,7 @@ postgresql:
 # OpenAI API key (set via environment variable)
 secrets:
   openaiApiKey: "${OPENAI_API_KEY}"
+  lightragApiKey: "${LIGHTRAG_API_KEY}"
 
 # Disable ingress for local development (use port-forward)
 ingress:

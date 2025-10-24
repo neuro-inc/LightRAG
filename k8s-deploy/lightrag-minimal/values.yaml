@@ -118,6 +118,8 @@ env:
 secrets:
   # Create a secret with your OpenAI API key
   openaiApiKey: ""  # Set this or create manually
+  # Provide the LightRAG API key for authenticated access (optional)
+  lightragApiKey: ""
   
 # Node selector and affinity
 nodeSelector: {}
