@@ -133,7 +133,12 @@ secrets:
   llmApiKey: "" # API key for LLM service (e.g., OpenRouter)
   embeddingApiKey: "" # API key for embedding service (e.g., Google Gemini)
   lightragApiKey: ""
-  
+
+auth:
+  enabled: false
+  accounts: []
+  tokenSecret: ""
+
 
 # Node selector and affinity
 nodeSelector: {}
