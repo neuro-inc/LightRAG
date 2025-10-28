@@ -51,6 +51,9 @@ postgresql:
     tag: pg16
   auth:
     password: "dev-lightrag-pass"
+    existingSecret: ""
+    secretKeys:
+      userPasswordKey: postgres-password
   primary:
     persistence:
       size: 5Gi

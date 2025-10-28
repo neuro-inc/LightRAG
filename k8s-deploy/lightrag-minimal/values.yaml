@@ -60,7 +60,10 @@ postgresql:
   auth:
     database: lightrag
     username: lightrag_user
-    password: lightrag_pass
+    password: ""
+    existingSecret: ""
+    secretKeys:
+      userPasswordKey: postgres-password
   primary:
     persistence:
       enabled: true

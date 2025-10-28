@@ -53,6 +53,9 @@ postgresql:
     tag: pg16
   auth:
     password: "secure-production-password"  # Use external secret in real production
+    existingSecret: ""
+    secretKeys:
+      userPasswordKey: postgres-password
   primary:
     persistence:
       size: 200Gi
