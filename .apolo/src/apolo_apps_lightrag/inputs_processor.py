@@ -7,16 +7,13 @@ from apolo_app_types.helm.apps.base import BaseChartValueProcessor
 from apolo_app_types.helm.apps.common import gen_extra_values
 from apolo_app_types.helm.utils.deep_merging import merge_list_of_dicts
 from apolo_app_types.protocols.common.networking import RestAPI
-from apolo_app_types.protocols.common.openai_compat import (
-    OpenAICompatChatAPI,
-    OpenAICompatEmbeddingsAPI,
-)
 from apolo_app_types.protocols.common.secrets_ import serialize_optional_secret
 
 from .types import (
     LightRAGAppInputs,
     OpenAIAPICloudProvider,
-    OpenAICompatEmbeddingsProvider,
+    OpenAICompatChatAPI,
+    OpenAICompatEmbeddingsAPI,
     OpenAIEmbeddingCloudProvider,
 )
 
@@ -110,7 +107,7 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
             }
         elif isinstance(
             embedding_config,
-            (OpenAICompatEmbeddingsProvider, OpenAICompatEmbeddingsAPI),
+            OpenAICompatEmbeddingsAPI,
         ):
             if embedding_config.hf_model is None:
                 msg = "OpenAI-compatible embedding configuration requires a Hugging Face model"

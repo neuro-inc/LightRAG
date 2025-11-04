@@ -525,113 +525,7 @@
       "x-title": "OpenAI API Cloud Provider",
       "x-type": "OpenAIAPICloudProvider"
     },
-    "OpenAICompatEmbeddingsProvider": {
-      "description": "OpenAI-compatible embeddings configuration for hosted providers.",
-      "properties": {
-        "host": {
-          "default": "api.openai.com",
-          "title": "Host",
-          "type": "string",
-          "x-description": "Hostname of the OpenAI-compatible embeddings endpoint.",
-          "x-is-advanced-field": false,
-          "x-meta-type": "inline",
-          "x-title": "Host"
-        },
-        "port": {
-          "default": 443,
-          "title": "Port",
-          "type": "integer",
-          "x-description": "HTTPS port for the embeddings endpoint.",
-          "x-is-advanced-field": false,
-          "x-meta-type": "inline",
-          "x-title": "Port"
-        },
-        "protocol": {
-          "const": "https",
-          "default": "https",
-          "title": "Protocol",
-          "type": "string"
-        },
-        "timeout": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": 60,
-          "title": "Timeout",
-          "x-description": "Connection timeout in seconds.",
-          "x-is-advanced-field": false,
-          "x-meta-type": "inline",
-          "x-title": "Timeout"
-        },
-        "base_path": {
-          "default": "/",
-          "title": "Base Path",
-          "type": "string"
-        },
-        "api_type": {
-          "const": "rest",
-          "default": "rest",
-          "title": "Api Type",
-          "type": "string"
-        },
-        "api_base_path": {
-          "default": "/v1",
-          "title": "Api Base Path",
-          "type": "string"
-        },
-        "openai_api_type": {
-          "const": "embeddings",
-          "default": "embeddings",
-          "title": "Openai Api Type",
-          "type": "string"
-        },
-        "endpoint_url": {
-          "const": "/v1/embeddings",
-          "default": "/v1/embeddings",
-          "title": "Endpoint Url",
-          "type": "string"
-        },
-        "hf_model": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/HuggingFaceModel"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "x-description": "Configure the Hugging Face model. Ensure it is available on the Hugging Face Hub and provide an API token with access rights if the repository is gated.",
-          "x-is-advanced-field": false,
-          "x-meta-type": "integration",
-          "x-title": "Hugging Face Model"
-        },
-        "dimensions": {
-          "title": "Dimensions",
-          "type": "integer",
-          "x-description": "Embedding vector dimensionality reported by the provider.",
-          "x-is-advanced-field": false,
-          "x-meta-type": "inline",
-          "x-title": "Embedding Dimensions"
-        }
-      },
-      "required": [
-        "dimensions"
-      ],
-      "title": "OpenAICompatEmbeddingsProvider",
-      "type": "object",
-      "x-description": "Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
-      "x-is-advanced-field": false,
-      "x-meta-type": "integration",
-      "x-title": "OpenAI Compatible API Embeddings",
-      "x-type": "OpenAICompatEmbeddingsProvider"
-    },
-    "OpenAICompatibleAPI": {
+    "OpenAICompatChatAPI": {
       "description": "OpenAI-compatible chat configuration for self-hosted or REST providers.",
       "properties": {
         "host": {
@@ -740,13 +634,119 @@
       "required": [
         "host"
       ],
-      "title": "OpenAICompatibleAPI",
+      "title": "OpenAICompatChatAPI",
       "type": "object",
       "x-description": "Use for self-hosted services (for example vLLM) or OpenAI-compatible REST providers. Supply a Hugging Face model.",
       "x-is-advanced-field": false,
       "x-meta-type": "integration",
       "x-title": "OpenAI Compatible API",
-      "x-type": "OpenAICompatibleAPI"
+      "x-type": "OpenAICompatChatAPI"
+    },
+    "OpenAICompatEmbeddingsAPI": {
+      "description": "OpenAI-compatible embeddings configuration for hosted providers.",
+      "properties": {
+        "host": {
+          "default": "api.openai.com",
+          "title": "Host",
+          "type": "string",
+          "x-description": "Hostname of the OpenAI-compatible embeddings endpoint.",
+          "x-is-advanced-field": false,
+          "x-meta-type": "inline",
+          "x-title": "Host"
+        },
+        "port": {
+          "default": 443,
+          "title": "Port",
+          "type": "integer",
+          "x-description": "HTTPS port for the embeddings endpoint.",
+          "x-is-advanced-field": false,
+          "x-meta-type": "inline",
+          "x-title": "Port"
+        },
+        "protocol": {
+          "const": "https",
+          "default": "https",
+          "title": "Protocol",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 60,
+          "title": "Timeout",
+          "x-description": "Connection timeout in seconds.",
+          "x-is-advanced-field": false,
+          "x-meta-type": "inline",
+          "x-title": "Timeout"
+        },
+        "base_path": {
+          "default": "/",
+          "title": "Base Path",
+          "type": "string"
+        },
+        "api_type": {
+          "const": "rest",
+          "default": "rest",
+          "title": "Api Type",
+          "type": "string"
+        },
+        "api_base_path": {
+          "default": "/v1",
+          "title": "Api Base Path",
+          "type": "string"
+        },
+        "openai_api_type": {
+          "const": "embeddings",
+          "default": "embeddings",
+          "title": "Openai Api Type",
+          "type": "string"
+        },
+        "endpoint_url": {
+          "const": "/v1/embeddings",
+          "default": "/v1/embeddings",
+          "title": "Endpoint Url",
+          "type": "string"
+        },
+        "hf_model": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HuggingFaceModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "x-description": "Configure the Hugging Face model. Ensure it is available on the Hugging Face Hub and provide an API token with access rights if the repository is gated.",
+          "x-is-advanced-field": false,
+          "x-meta-type": "integration",
+          "x-title": "Hugging Face Model"
+        },
+        "dimensions": {
+          "title": "Dimensions",
+          "type": "integer",
+          "x-description": "Embedding vector dimensionality reported by the provider.",
+          "x-is-advanced-field": false,
+          "x-meta-type": "inline",
+          "x-title": "Embedding Dimensions"
+        }
+      },
+      "required": [
+        "dimensions"
+      ],
+      "title": "OpenAICompatEmbeddingsAPI",
+      "type": "object",
+      "x-description": "Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
+      "x-is-advanced-field": false,
+      "x-meta-type": "integration",
+      "x-title": "OpenAI Compatible API Embeddings",
+      "x-type": "OpenAICompatEmbeddingsAPI"
     },
     "OpenAIEmbeddingCloudProvider": {
       "description": "Official OpenAI embeddings configuration.",
@@ -916,7 +916,7 @@
     "llm_config": {
       "anyOf": [
         {
-          "$ref": "#/$defs/OpenAICompatibleAPI"
+          "$ref": "#/$defs/OpenAICompatChatAPI"
         },
         {
           "$ref": "#/$defs/OpenAIAPICloudProvider"
@@ -931,7 +931,7 @@
     "embedding_config": {
       "anyOf": [
         {
-          "$ref": "#/$defs/OpenAICompatEmbeddingsProvider"
+          "$ref": "#/$defs/OpenAICompatEmbeddingsAPI"
         },
         {
           "$ref": "#/$defs/OpenAIEmbeddingCloudProvider"
