@@ -192,7 +192,11 @@ async def test_inputs_processor_llm_variants(
     assert env["LLM_BINDING"] == "openai"
     assert env["LLM_MODEL"] == expected_model
     assert env["LLM_BINDING_HOST"] == expected_host
-    expected_api_key = getattr(llm_config, "api_key", None) or ""
+    expected_api_key = getattr(llm_config, "api_key", None)
+    if expected_api_key is None or (
+        isinstance(expected_api_key, str) and not expected_api_key.strip()
+    ):
+        expected_api_key = "no-auth"
     assert env["LLM_BINDING_API_KEY"] == expected_api_key
     assert env["OPENAI_API_KEY"] == expected_api_key
 
@@ -291,6 +295,12 @@ async def test_inputs_processor_embedding_variants(
     assert env["EMBEDDING_BINDING"] == expected_binding
     assert env["EMBEDDING_BINDING_HOST"] == expected_host
     assert env["EMBEDDING_DIM"] == expected_dim
+    expected_api_key = getattr(embedding_config, "api_key", None)
+    if expected_api_key is None or (
+        isinstance(expected_api_key, str) and not expected_api_key.strip()
+    ):
+        expected_api_key = "no-auth"
+    assert env["EMBEDDING_BINDING_API_KEY"] == expected_api_key
 
 
 @pytest.mark.asyncio

@@ -83,11 +83,14 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
                 raise ValueError(msg)
             model = llm_config.hf_model.model_hf_name
             host = _normalise_complete_url(llm_config)
+            api_key = getattr(llm_config, "api_key", None)
+            if api_key is None or (isinstance(api_key, str) and not api_key.strip()):
+                api_key = "no-auth"
             return {
                 "binding": "openai",
                 "model": model,
                 "host": host,
-                "api_key": getattr(llm_config, "api_key", None),
+                "api_key": api_key,
             }
 
         msg = f"Unsupported LLM configuration type: {type(llm_config)!r}"
@@ -105,10 +108,7 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
                 "dimensions": dimensions,
                 "host": host,
             }
-        elif isinstance(
-            embedding_config,
-            OpenAICompatEmbeddingsAPI,
-        ):
+        elif isinstance(embedding_config, OpenAICompatEmbeddingsAPI):
             if embedding_config.hf_model is None:
                 msg = "OpenAI-compatible embedding configuration requires a Hugging Face model"
                 raise ValueError(msg)
@@ -118,10 +118,13 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
             if dimensions is None:
                 msg = "Embedding configuration must specify dimensions"
                 raise ValueError(msg)
+            api_key = getattr(embedding_config, "api_key", None)
+            if api_key is None or (isinstance(api_key, str) and not api_key.strip()):
+                api_key = "no-auth"
             return {
                 "binding": "openai",
                 "model": model,
-                "api_key": getattr(embedding_config, "api_key", None),
+                "api_key": api_key,
                 "dimensions": dimensions,
                 "host": host,
             }
