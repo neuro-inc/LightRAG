@@ -199,7 +199,10 @@ class RAGEvaluator:
         logger.info("  • Embedding Model:      %s", self.eval_embedding_model)
         if self.eval_base_url:
             logger.info("  • Custom Endpoint:      %s", self.eval_base_url)
-            logger.info("  • Bypass N-Parameter:   Enabled (use LangchainLLMWrapperfor compatibility)")
+            logger.info(
+                "  • Bypass N-Parameter:   Enabled (use LangchainLLMWrapper for "
+                "compatibility)"
+            )
         else:
             logger.info("  • Endpoint:             OpenAI Official API")
 
