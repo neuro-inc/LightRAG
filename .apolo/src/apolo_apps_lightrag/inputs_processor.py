@@ -217,7 +217,7 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
             "replicaCount": 1,
             "image": {
                 "repository": "ghcr.io/hkuds/lightrag",
-                "tag": "1.3.8",
+                "tag": "v1.4.9.7",
                 "pullPolicy": "IfNotPresent",
             },
             "service": {
