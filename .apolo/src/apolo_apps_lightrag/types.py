@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -262,39 +262,6 @@ class LightRAGAppInputs(AppInputs):
             description="Configure persistent storage for LightRAG data and inputs.",
         ).as_json_schema_extra(),
     )
-
-    @field_validator("llm_config", mode="before")
-    @classmethod
-    def _select_llm_provider(cls, value: object) -> object:
-        if isinstance(value, (OpenAICompatChatAPI, OpenAIAPICloudProvider)):
-            return value
-        if isinstance(value, dict):
-            data: dict[str, Any] = value
-            hf_model = data.get("hf_model")
-            if hf_model:
-                return OpenAICompatChatAPI.model_validate(data)
-            model = data.get("model")
-            if model:
-                return OpenAIAPICloudProvider.model_validate(data)
-        return value
-
-    @field_validator("embedding_config", mode="before")
-    @classmethod
-    def _select_embedding_provider(cls, value: object) -> object:
-        if isinstance(
-            value,
-            (OpenAICompatEmbeddingsAPI, OpenAIEmbeddingCloudProvider),
-        ):
-            return value
-        if isinstance(value, dict):
-            data: dict[str, Any] = value
-            hf_model = data.get("hf_model")
-            if hf_model:
-                return OpenAICompatEmbeddingsAPI.model_validate(data)
-            model = data.get("model")
-            if model:
-                return OpenAIEmbeddingCloudProvider.model_validate(data)
-        return value
 
 
 class LightRAGAppOutputs(AppOutputs):
