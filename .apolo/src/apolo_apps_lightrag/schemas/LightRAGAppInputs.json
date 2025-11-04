@@ -627,7 +627,7 @@
       "type": "object",
       "x-description": "Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
       "x-is-advanced-field": false,
-      "x-meta-type": "inline",
+      "x-meta-type": "integration",
       "x-title": "OpenAI Compatible API Embeddings",
       "x-type": "OpenAICompatEmbeddingsProvider"
     },
@@ -744,7 +744,7 @@
       "type": "object",
       "x-description": "Use for self-hosted services (for example vLLM) or OpenAI-compatible REST providers. Supply a Hugging Face model.",
       "x-is-advanced-field": false,
-      "x-meta-type": "inline",
+      "x-meta-type": "integration",
       "x-title": "OpenAI Compatible API",
       "x-type": "OpenAICompatibleAPI"
     },

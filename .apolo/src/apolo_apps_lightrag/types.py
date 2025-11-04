@@ -30,7 +30,7 @@ class OpenAICompatibleAPI(OpenAICompatChatAPI):
                 "Use for self-hosted services (for example vLLM) or OpenAI-compatible"
                 " REST providers. Supply a Hugging Face model."
             ),
-            meta_type=SchemaMetaType.INLINE,
+            meta_type=SchemaMetaType.INTEGRATION,
         ).as_json_schema_extra(),
     )
 
@@ -136,7 +136,7 @@ class OpenAICompatEmbeddingsProvider(OpenAICompatEmbeddingsAPI):
         json_schema_extra=SchemaExtraMetadata(
             title="OpenAI Compatible API Embeddings",
             description="Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
-            meta_type=SchemaMetaType.INLINE,
+            meta_type=SchemaMetaType.INTEGRATION,
         ).as_json_schema_extra(),
     )
     host: str = Field(
