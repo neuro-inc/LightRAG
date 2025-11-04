@@ -182,7 +182,6 @@ name = "apolo-apps-lightrag"
 version = "0.0.1"
 description = "Apolo LightRAG application"
 authors = ["Apolo.us"]
-package-mode = false
 packages = [
   { include = "apolo_apps_lightrag", from = ".apolo/src" },
 ]
