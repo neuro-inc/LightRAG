@@ -28,7 +28,7 @@ description = "Async client for aws services using botocore and aiohttp"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"offline-llm\" or extra == \"offline\""
+markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\""
 files = [
     {file = "aiobotocore-2.25.1-py3-none-any.whl", hash = "sha256:eb6daebe3cbef5b39a0bb2a97cffbe9c7cb46b2fcc399ad141f369f3c2134b1f"},
     {file = "aiobotocore-2.25.1.tar.gz", hash = "sha256:ea9be739bfd7ece8864f072ec99bb9ed5c7e78ebb2b0b15f29781fbe02daedbc"},
@@ -48,6 +48,27 @@ wrapt = ">=1.10.10,<2.0.0"
 awscli = ["awscli (>=1.42.46,<1.42.62)"]
 boto3 = ["boto3 (>=1.40.46,<1.40.62)"]
 httpx = ["httpx (>=0.25.1,<0.29)"]
+
+[[package]]
+name = "aiodocker"
+version = "0.24.0"
+description = "A simple Docker HTTP API wrapper written with asyncio and aiohttp."
+optional = true
+python-versions = ">=3.9.0"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "aiodocker-0.24.0-py3-none-any.whl", hash = "sha256:2199b7b01f8ce68f9cabab7910ecb26192f6f3494163f1ccffe527b4c3875689"},
+    {file = "aiodocker-0.24.0.tar.gz", hash = "sha256:661a6f9a479951f11f793031dcd5d55337e232c4ceaee69d51ceb885e5f16fac"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.8"
+
+[package.extras]
+ci = ["aiohttp (==3.11.6)", "async-timeout (==5.0.1)", "multidict (==6.1.0)", "yarl (==1.17.2)"]
+dev = ["async-timeout (==5.0.1)", "codecov (==2.1.13)", "mypy (==1.13.0)", "packaging (==24.1)", "pre-commit (>=3.5.0)", "pytest (==8.3.3)", "pytest-asyncio (==0.24.0)", "pytest-cov (==6.0.0)", "pytest-sugar (==1.0.0)", "ruff (==0.7.1)", "ruff-lsp (==0.0.58)", "towncrier (==24.8.0)"]
+doc = ["alabaster (==1.0.0)", "sphinx (==8.1.3)", "sphinx-autodoc-typehints (==2.4.4)", "sphinxcontrib-asyncio (==0.3.0)"]
 
 [[package]]
 name = "aiofiles"
@@ -183,13 +204,32 @@ yarl = ">=1.17.0,<2.0"
 speedups = ["Brotli ; platform_python_implementation == \"CPython\"", "aiodns (>=3.3.0)", "brotlicffi ; platform_python_implementation != \"CPython\""]
 
 [[package]]
+name = "aiohttp-security"
+version = "0.5.0"
+description = "security for aiohttp.web"
+optional = true
+python-versions = "*"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "aiohttp-security-0.5.0.tar.gz", hash = "sha256:50cb724d310e1d0289798bb98ae852c3b75b77e8f51ce5159c57b7261d0638bd"},
+    {file = "aiohttp_security-0.5.0-py3-none-any.whl", hash = "sha256:791ecbb4bbdb95b3a2033bda345231628ea42903b2d33b6a3bf8737ed68c6072"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.9"
+
+[package.extras]
+session = ["aiohttp-session"]
+
+[[package]]
 name = "aioitertools"
 version = "0.12.0"
 description = "itertools and builtins for AsyncIO and mixed iterables"
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"offline-llm\" or extra == \"offline\""
+markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\""
 files = [
     {file = "aioitertools-0.12.0-py3-none-any.whl", hash = "sha256:fc1f5fac3d737354de8831cbba3eb04f79dd649d8f3afb4c5b114925e662a796"},
     {file = "aioitertools-0.12.0.tar.gz", hash = "sha256:c2a9055b4fbb7705f561b9d86053e8af5d10cc845d22c32008c43490b2d8dd6b"},
@@ -308,7 +348,7 @@ description = "High level compatibility layer for multiple asynchronous event lo
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"offline-storage\""
+markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"apolo\" or extra == \"offline-storage\""
 files = [
     {file = "anyio-4.9.0-py3-none-any.whl", hash = "sha256:9f76d541cad6e36af7beb62e978876f3b41e3e04f2c1fbf0884604c0a9c4d93c"},
     {file = "anyio-4.9.0.tar.gz", hash = "sha256:673c0c244e15788651a4ff38710fea9675823028a6f08a5eda409e0c9840a028"},
@@ -323,6 +363,58 @@ typing_extensions = {version = ">=4.5", markers = "python_version < \"3.13\""}
 doc = ["Sphinx (>=8.2,<9.0)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx_rtd_theme"]
 test = ["anyio[trio]", "blockbuster (>=1.5.23)", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypothesis (>=4.0)", "psutil (>=5.9)", "pytest (>=7.0)", "trustme", "truststore (>=0.9.1) ; python_version >= \"3.10\"", "uvloop (>=0.21) ; platform_python_implementation == \"CPython\" and platform_system != \"Windows\" and python_version < \"3.14\""]
 trio = ["trio (>=0.26.1)"]
+
+[[package]]
+name = "apolo-app-types"
+version = "25.11.0"
+description = "Apolo Platform App Types."
+optional = true
+python-versions = "<4.0,>=3.9.0"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "apolo_app_types-25.11.0-py3-none-any.whl", hash = "sha256:54827fa019353b4341ccd167f98b9ba1214233a0ecc3595e5aaf308b73949e72"},
+    {file = "apolo_app_types-25.11.0.tar.gz", hash = "sha256:86d6584e0db2f5c5017e8c811f6d8ffd4a7d1d80c35da42f0381edf2a0588c3b"},
+]
+
+[package.dependencies]
+apolo-sdk = ">=25.9.1,<26.0.0"
+click = ">=8.0.3,<9.0.0"
+httpx = ">=0.28.0,<0.29.0"
+jsonref = ">=1.1.0,<2.0.0"
+kubernetes = ">=34.1.0,<35.0.0"
+pydantic = ">=2.12.3,<3.0.0"
+pyyaml = ">=6.0.3,<7.0.0"
+types-PyYAML = ">=6.0.12.20250915,<7.0.0.0"
+yarl = ">=1.22.0,<2.0.0"
+
+[[package]]
+name = "apolo-sdk"
+version = "25.11.0"
+description = "Apolo SDK"
+optional = true
+python-versions = ">=3.9.0"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "apolo_sdk-25.11.0-py3-none-any.whl", hash = "sha256:b437916d3fff16ff7c2a1f76c0e0114dc437fc41cffb765fd9766243669baf78"},
+    {file = "apolo_sdk-25.11.0.tar.gz", hash = "sha256:6bbad71e12eddf333504de0465ab8d0dc05e55603f8ec3fcef5c92548490f53b"},
+]
+
+[package.dependencies]
+aiobotocore = ">=2.3.0,<3.0"
+aiodocker = ">=0.24.0"
+aiohttp = ">=3.11.3"
+azure-storage-blob = ">=12.8.1,<12.9.0 || >12.9.0"
+certifi = "*"
+google-auth = ">=2.0.2"
+neuro-admin-client = "25.9.2"
+neuro-config-client = "25.10.0"
+packaging = ">=20.4"
+python-dateutil = ">=2.7.0"
+python-jose = ">=3.3.0"
+pyyaml = ">=5.0"
+toml = ">=0.10.0"
 
 [[package]]
 name = "appdirs"
@@ -452,6 +544,49 @@ dev = ["cloudpickle ; platform_python_implementation == \"CPython\"", "hypothesi
 docs = ["cogapp", "furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-towncrier", "towncrier"]
 tests = ["cloudpickle ; platform_python_implementation == \"CPython\"", "hypothesis", "mypy (>=1.11.1) ; platform_python_implementation == \"CPython\" and python_version >= \"3.10\"", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins ; platform_python_implementation == \"CPython\" and python_version >= \"3.10\"", "pytest-xdist[psutil]"]
 tests-mypy = ["mypy (>=1.11.1) ; platform_python_implementation == \"CPython\" and python_version >= \"3.10\"", "pytest-mypy-plugins ; platform_python_implementation == \"CPython\" and python_version >= \"3.10\""]
+
+[[package]]
+name = "azure-core"
+version = "1.36.0"
+description = "Microsoft Azure Core Library for Python"
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "azure_core-1.36.0-py3-none-any.whl", hash = "sha256:fee9923a3a753e94a259563429f3644aaf05c486d45b1215d098115102d91d3b"},
+    {file = "azure_core-1.36.0.tar.gz", hash = "sha256:22e5605e6d0bf1d229726af56d9e92bc37b6e726b141a18be0b4d424131741b7"},
+]
+
+[package.dependencies]
+requests = ">=2.21.0"
+typing-extensions = ">=4.6.0"
+
+[package.extras]
+aio = ["aiohttp (>=3.0)"]
+tracing = ["opentelemetry-api (>=1.26,<2.0)"]
+
+[[package]]
+name = "azure-storage-blob"
+version = "12.27.1"
+description = "Microsoft Azure Blob Storage Client Library for Python"
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "azure_storage_blob-12.27.1-py3-none-any.whl", hash = "sha256:65d1e25a4628b7b6acd20ff7902d8da5b4fde8e46e19c8f6d213a3abc3ece272"},
+    {file = "azure_storage_blob-12.27.1.tar.gz", hash = "sha256:a1596cc4daf5dac9be115fcb5db67245eae894cf40e4248243754261f7b674a6"},
+]
+
+[package.dependencies]
+azure-core = ">=1.30.0"
+cryptography = ">=2.1.4"
+isodate = ">=0.6.1"
+typing-extensions = ">=4.6.0"
+
+[package.extras]
+aio = ["azure-core[aio] (>=1.30.0)"]
 
 [[package]]
 name = "backoff"
@@ -619,7 +754,7 @@ description = "Low-level, data-driven core of boto 3."
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"offline-llm\" or extra == \"offline\""
+markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\""
 files = [
     {file = "botocore-1.40.61-py3-none-any.whl", hash = "sha256:17ebae412692fd4824f99cde0f08d50126dc97954008e5ba2b522eb049238aa7"},
     {file = "botocore-1.40.61.tar.gz", hash = "sha256:a2487ad69b090f9cccd64cf07c7021cd80ee9c0655ad974f87045b02f3ef52cd"},
@@ -640,7 +775,7 @@ description = "Extensible memoizing collections and decorators"
 optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"offline-llm\" or extra == \"offline\""
+markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\""
 files = [
     {file = "cachetools-5.5.2-py3-none-any.whl", hash = "sha256:d26a22bcc62eb95c3beabd9f1ee5e820d3d2704fe2967cbe350e20c8ffcd3f0a"},
     {file = "cachetools-5.5.2.tar.gz", hash = "sha256:1a661caa9175d26759571b2e19580f9d6393969e5dfca11fdb1f947a23e640d4"},
@@ -665,7 +800,7 @@ description = "Foreign Function Interface for Python calling C code."
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"api\" and platform_python_implementation != \"PyPy\""
+markers = "(extra == \"api\" or extra == \"apolo\") and platform_python_implementation != \"PyPy\""
 files = [
     {file = "cffi-1.17.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:df8b1c11f177bc2313ec4b2d46baec87a5f3e71fc8b45dab2ee7cae86d9aba14"},
     {file = "cffi-1.17.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8f2cdc858323644ab277e9bb925ad72ae0e67f69e804f4898c070998d50b1a67"},
@@ -860,7 +995,7 @@ description = "Composable command line interface toolkit"
 optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\""
+markers = "python_version <= \"3.12\" and (extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"apolo\") or extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\" or extra == \"evaluation\""
 files = [
     {file = "click-8.1.8-py3-none-any.whl", hash = "sha256:63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2"},
     {file = "click-8.1.8.tar.gz", hash = "sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a"},
@@ -880,7 +1015,7 @@ files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-markers = {main = "sys_platform == \"win32\" or (extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\") and platform_system == \"Windows\" or extra == \"offline-llm\" or extra == \"offline\"", dev = "sys_platform == \"win32\""}
+markers = {main = "sys_platform == \"win32\" or (extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"apolo\") and platform_system == \"Windows\" or extra == \"offline-llm\" or extra == \"offline\"", dev = "sys_platform == \"win32\""}
 
 [[package]]
 name = "configparser"
@@ -985,7 +1120,7 @@ description = "cryptography is a package which provides cryptographic recipes an
 optional = true
 python-versions = "!=3.9.0,!=3.9.1,>=3.7"
 groups = ["main"]
-markers = "extra == \"api\""
+markers = "extra == \"api\" or extra == \"apolo\""
 files = [
     {file = "cryptography-44.0.2-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:efcfe97d1b3c79e486554efddeb8f6f53a4cdd4cf6086642784fa31fc384e1d7"},
     {file = "cryptography-44.0.2-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:29ecec49f3ba3f3849362854b7253a9f59799e3763b0c9d0826259a88efa02f1"},
@@ -1240,13 +1375,26 @@ docs = ["pydoctor (>=25.4.0)"]
 test = ["pytest"]
 
 [[package]]
+name = "durationpy"
+version = "0.10"
+description = "Module for converting between datetime.timedelta and Go's Duration strings."
+optional = true
+python-versions = "*"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "durationpy-0.10-py3-none-any.whl", hash = "sha256:3b41e1b601234296b4fb368338fdcd3e13e0b4fb5b67345948f4f2bf9868b286"},
+    {file = "durationpy-0.10.tar.gz", hash = "sha256:1fa6893409a6e739c9c72334fc65cca1f355dbdd93405d30f726deb5bde42fba"},
+]
+
+[[package]]
 name = "ecdsa"
 version = "0.19.1"
 description = "ECDSA cryptographic signature library (pure python)"
 optional = true
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.6"
 groups = ["main"]
-markers = "extra == \"api\""
+markers = "extra == \"api\" or extra == \"apolo\""
 files = [
     {file = "ecdsa-0.19.1-py2.py3-none-any.whl", hash = "sha256:30638e27cf77b7e15c4c4cc1973720149e1033827cfd00661ca5c8cc0cdb24c3"},
     {file = "ecdsa-0.19.1.tar.gz", hash = "sha256:478cba7b62555866fcb3bb3fe985e06decbdb68ef55713c4e5ab98c57d508e61"},
@@ -1534,6 +1682,34 @@ doc = ["sphinx (>=7.1.2,<7.2)", "sphinx-autodoc-typehints", "sphinx_rtd_theme"]
 test = ["coverage[toml]", "ddt (>=1.1.1,!=1.4.3)", "mock ; python_version < \"3.8\"", "mypy", "pre-commit", "pytest (>=7.3.1)", "pytest-cov", "pytest-instafail", "pytest-mock", "pytest-sugar", "typing-extensions ; python_version < \"3.11\""]
 
 [[package]]
+name = "google-auth"
+version = "2.42.1"
+description = "Google Authentication Library"
+optional = true
+python-versions = ">=3.7"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "google_auth-2.42.1-py2.py3-none-any.whl", hash = "sha256:eb73d71c91fc95dbd221a2eb87477c278a355e7367a35c0d84e6b0e5f9b4ad11"},
+    {file = "google_auth-2.42.1.tar.gz", hash = "sha256:30178b7a21aa50bffbdc1ffcb34ff770a2f65c712170ecd5446c4bef4dc2b94e"},
+]
+
+[package.dependencies]
+cachetools = ">=2.0.0,<7.0"
+pyasn1-modules = ">=0.2.1"
+rsa = ">=3.1.4,<5"
+
+[package.extras]
+aiohttp = ["aiohttp (>=3.6.2,<4.0.0)", "requests (>=2.20.0,<3.0.0)"]
+enterprise-cert = ["cryptography", "pyopenssl"]
+pyjwt = ["cryptography (<39.0.0) ; python_version < \"3.8\"", "cryptography (>=38.0.3)", "pyjwt (>=2.0)"]
+pyopenssl = ["cryptography (<39.0.0) ; python_version < \"3.8\"", "cryptography (>=38.0.3)", "pyopenssl (>=20.0.0)"]
+reauth = ["pyu2f (>=0.1.5)"]
+requests = ["requests (>=2.20.0,<3.0.0)"]
+testing = ["aiohttp (<3.10.0)", "aiohttp (>=3.6.2,<4.0.0)", "aioresponses", "cryptography (<39.0.0) ; python_version < \"3.8\"", "cryptography (<39.0.0) ; python_version < \"3.8\"", "cryptography (>=38.0.3)", "cryptography (>=38.0.3)", "flask", "freezegun", "grpcio", "mock", "oauth2client", "packaging", "pyjwt (>=2.0)", "pyopenssl (<24.3.0)", "pyopenssl (>=20.0.0)", "pytest", "pytest-asyncio", "pytest-cov", "pytest-localserver", "pyu2f (>=0.1.5)", "requests (>=2.20.0,<3.0.0)", "responses", "urllib3"]
+urllib3 = ["packaging", "urllib3"]
+
+[[package]]
 name = "googleapis-common-protos"
 version = "1.71.0"
 description = "Common protobufs used in Google APIs"
@@ -1559,7 +1735,7 @@ description = "Lightweight in-process concurrent programming"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "(extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\") and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\") and (extra == \"offline-llm\" or extra == \"offline\" or python_version < \"3.12\")"
+markers = "(extra == \"offline-llm\" or extra == \"offline\") and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\")"
 files = [
     {file = "greenlet-3.2.4-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:8c68325b0d0acf8d91dde4e6f930967dd52a5302cd4062932a6b2e7c2969f47c"},
     {file = "greenlet-3.2.4-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:94385f101946790ae13da500603491f04a76b6e4c059dab271b3ce2e283b2590"},
@@ -1722,7 +1898,7 @@ description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"offline-storage\""
+markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"apolo\" or extra == \"offline-storage\""
 files = [
     {file = "h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"},
     {file = "h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1"},
@@ -1801,7 +1977,7 @@ description = "A minimal low-level HTTP client."
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"offline-storage\""
+markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"apolo\" or extra == \"offline-storage\""
 files = [
     {file = "httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55"},
     {file = "httpcore-1.0.9.tar.gz", hash = "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8"},
@@ -1824,7 +2000,7 @@ description = "The next generation HTTP client."
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"offline-storage\""
+markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"apolo\" or extra == \"offline-storage\""
 files = [
     {file = "httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"},
     {file = "httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc"},
@@ -2026,6 +2202,19 @@ writer = ["writer-sdk (>=2.2.0,<3.0.0)"]
 xai = ["python-dotenv (>=1.0.0)", "xai-sdk (>=0.2.0) ; python_version >= \"3.10\""]
 
 [[package]]
+name = "isodate"
+version = "0.7.2"
+description = "An ISO 8601 date/time/duration parser and formatter"
+optional = true
+python-versions = ">=3.7"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "isodate-0.7.2-py3-none-any.whl", hash = "sha256:28009937d8031054830160fce6d409ed342816b543597cece116d966c6d99e15"},
+    {file = "isodate-0.7.2.tar.gz", hash = "sha256:4cd1aa0f43ca76f4a6c6c0292a85f40b35ec2e43e315b59f06e6d32171a953e6"},
+]
+
+[[package]]
 name = "jinja2"
 version = "3.1.6"
 description = "A very fast and expressive template engine."
@@ -2139,7 +2328,7 @@ description = "JSON Matching Expressions"
 optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"offline-llm\" or extra == \"offline\""
+markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\""
 files = [
     {file = "jmespath-1.0.1-py3-none-any.whl", hash = "sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980"},
     {file = "jmespath-1.0.1.tar.gz", hash = "sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe"},
@@ -2198,6 +2387,47 @@ files = [
     {file = "jsonpointer-3.0.0-py2.py3-none-any.whl", hash = "sha256:13e088adc14fca8b6aa8177c044e12701e6ad4b28ff10e65f2267a90109c9942"},
     {file = "jsonpointer-3.0.0.tar.gz", hash = "sha256:2b2d729f2091522d61c3b31f82e11870f60b68f43fbc705cb76bf4b832af59ef"},
 ]
+
+[[package]]
+name = "jsonref"
+version = "1.1.0"
+description = "jsonref is a library for automatic dereferencing of JSON Reference objects for Python."
+optional = true
+python-versions = ">=3.7"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "jsonref-1.1.0-py3-none-any.whl", hash = "sha256:590dc7773df6c21cbf948b5dac07a72a251db28b0238ceecce0a2abfa8ec30a9"},
+    {file = "jsonref-1.1.0.tar.gz", hash = "sha256:32fe8e1d85af0fdefbebce950af85590b22b60f9e95443176adbde4e1ecea552"},
+]
+
+[[package]]
+name = "kubernetes"
+version = "34.1.0"
+description = "Kubernetes python client"
+optional = true
+python-versions = ">=3.6"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "kubernetes-34.1.0-py2.py3-none-any.whl", hash = "sha256:bffba2272534e224e6a7a74d582deb0b545b7c9879d2cd9e4aae9481d1f2cc2a"},
+    {file = "kubernetes-34.1.0.tar.gz", hash = "sha256:8fe8edb0b5d290a2f3ac06596b23f87c658977d46b5f8df9d0f4ea83d0003912"},
+]
+
+[package.dependencies]
+certifi = ">=14.05.14"
+durationpy = ">=0.7"
+google-auth = ">=1.0.1"
+python-dateutil = ">=2.5.3"
+pyyaml = ">=5.4.1"
+requests = "*"
+requests-oauthlib = "*"
+six = ">=1.9.0"
+urllib3 = ">=1.24.2,<2.4.0"
+websocket-client = ">=0.32.0,<0.40.0 || >0.40.0,<0.41.dev0 || >=0.43.dev0"
+
+[package.extras]
+adal = ["adal (>=1.0.2)"]
 
 [[package]]
 name = "langchain"
@@ -3265,6 +3495,43 @@ test = ["pytest (>=7.2)", "pytest-cov (>=4.0)", "pytest-xdist (>=3.0)"]
 test-extras = ["pytest-mpl", "pytest-randomly"]
 
 [[package]]
+name = "neuro-admin-client"
+version = "25.9.2"
+description = "Internal client for Neu.ro admin service"
+optional = true
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "neuro_admin_client-25.9.2-py3-none-any.whl", hash = "sha256:863c2fb5cdec1168fbf7be26f892d231f97af1b3b1f57ebc3ac51ab16be6d603"},
+    {file = "neuro_admin_client-25.9.2.tar.gz", hash = "sha256:9b4ee1c3a970e60bf595aeda1e7fc0afcc1c83b8ccdc105da898df12923a91e3"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.8.1"
+aiohttp-security = ">=0.4.0"
+multidict = ">=6"
+python-jose = ">=3.0.1"
+yarl = ">=1.10"
+
+[[package]]
+name = "neuro-config-client"
+version = "25.10.0"
+description = "Internal client for Neu.ro config service"
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "neuro_config_client-25.10.0-py3-none-any.whl", hash = "sha256:d1e9c35b6b5069ae72846e2bb10178dccfb0fc2d60dcdedadd8c5dc8261e6b45"},
+    {file = "neuro_config_client-25.10.0.tar.gz", hash = "sha256:c3db71b610fe258ff5ee54a827d0ead613e84efceae22b1215b5f3c1febb3c98"},
+]
+
+[package.dependencies]
+aiohttp = ">=3.7"
+tzdata = "*"
+
+[[package]]
 name = "nltk"
 version = "3.9.2"
 description = "Natural Language Toolkit"
@@ -3386,6 +3653,24 @@ files = [
     {file = "numpy-2.3.4-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:81b3a59793523e552c4a96109dde028aa4448ae06ccac5a76ff6532a85558a7f"},
     {file = "numpy-2.3.4.tar.gz", hash = "sha256:a7d018bfedb375a8d979ac758b120ba846a7fe764911a64465fd87b8729f4a6a"},
 ]
+
+[[package]]
+name = "oauthlib"
+version = "3.3.1"
+description = "A generic, spec-compliant, thorough implementation of the OAuth request-signing logic"
+optional = true
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "oauthlib-3.3.1-py3-none-any.whl", hash = "sha256:88119c938d2b8fb88561af5f6ee0eec8cc8d552b7bb1f712743136eb7523b7a1"},
+    {file = "oauthlib-3.3.1.tar.gz", hash = "sha256:0f0f8aa759826a193cf66c12ea1af1637f87b9b4622d46e866952bb022e538c9"},
+]
+
+[package.extras]
+rsa = ["cryptography (>=3.0.0)"]
+signals = ["blinker (>=1.4.0)"]
+signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
 name = "ollama"
@@ -4320,11 +4605,27 @@ description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs 
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"api\""
+markers = "extra == \"api\" or extra == \"apolo\""
 files = [
     {file = "pyasn1-0.6.1-py3-none-any.whl", hash = "sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629"},
     {file = "pyasn1-0.6.1.tar.gz", hash = "sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034"},
 ]
+
+[[package]]
+name = "pyasn1-modules"
+version = "0.4.2"
+description = "A collection of ASN.1-based protocols modules"
+optional = true
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "pyasn1_modules-0.4.2-py3-none-any.whl", hash = "sha256:29253a9207ce32b64c3ac6600edc75368f98473906e8fd1043bd6b5b1de2c14a"},
+    {file = "pyasn1_modules-0.4.2.tar.gz", hash = "sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6"},
+]
+
+[package.dependencies]
+pyasn1 = ">=0.6.1,<0.7.0"
 
 [[package]]
 name = "pycparser"
@@ -4333,7 +4634,7 @@ description = "C parser in Python"
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"api\" and platform_python_implementation != \"PyPy\""
+markers = "(extra == \"api\" or extra == \"apolo\") and platform_python_implementation != \"PyPy\""
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
     {file = "pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"},
@@ -4798,27 +5099,6 @@ files = [
 
 [[package]]
 name = "pytest"
-version = "8.3.5"
-description = "pytest: simple powerful testing with Python"
-optional = false
-python-versions = ">=3.8"
-groups = ["main", "dev"]
-files = [
-    {file = "pytest-8.3.5-py3-none-any.whl", hash = "sha256:c69214aa47deac29fad6c2a4f590b9c4a9fdb16a403176fe154b79c0b4d4d820"},
-    {file = "pytest-8.3.5.tar.gz", hash = "sha256:f4efe70cc14e511565ac476b57c279e12a855b11f48f212af1080ef2263d3845"},
-]
-
-[package.dependencies]
-colorama = {version = "*", markers = "sys_platform == \"win32\""}
-iniconfig = "*"
-packaging = "*"
-pluggy = ">=1.5,<2"
-
-[package.extras]
-dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
-
-[[package]]
-name = "pytest"
 version = "8.4.2"
 description = "pytest: simple powerful testing with Python"
 optional = false
@@ -4933,7 +5213,7 @@ description = "JOSE implementation in Python"
 optional = true
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "extra == \"api\""
+markers = "extra == \"api\" or extra == \"apolo\""
 files = [
     {file = "python_jose-3.5.0-py2.py3-none-any.whl", hash = "sha256:abd1202f23d34dfad2c3d28cb8617b90acf34132c7afd60abd0b0b7d3cb55771"},
     {file = "python_jose-3.5.0.tar.gz", hash = "sha256:fb4eaa44dbeb1c26dcc69e4bd7ec54a1cb8dd64d3b4d81ef08d90ff453f2b01b"},
@@ -5108,7 +5388,7 @@ files = [
     {file = "pyyaml-6.0.3-cp39-cp39-win_amd64.whl", hash = "sha256:2e71d11abed7344e42a8849600193d15b6def118602c4c176f748e4583246007"},
     {file = "pyyaml-6.0.3.tar.gz", hash = "sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f"},
 ]
-markers = {main = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\""}
+markers = {main = "python_version <= \"3.12\" and (extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"apolo\") or extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\" or extra == \"evaluation\""}
 
 [[package]]
 name = "qdrant-client"
@@ -5354,6 +5634,26 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "requests-oauthlib"
+version = "2.0.0"
+description = "OAuthlib authentication support for Requests."
+optional = true
+python-versions = ">=3.4"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "requests-oauthlib-2.0.0.tar.gz", hash = "sha256:b3dffaebd884d8cd778494369603a9e7b58d29111bf6b41bdc2dcd87203af4e9"},
+    {file = "requests_oauthlib-2.0.0-py2.py3-none-any.whl", hash = "sha256:7dd8a5c40426b779b0868c404bdef9768deccf22749cde15852df527e6269b36"},
+]
+
+[package.dependencies]
+oauthlib = ">=3.0.0"
+requests = ">=2.0.0"
+
+[package.extras]
+rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
+
+[[package]]
 name = "requests-toolbelt"
 version = "1.0.0"
 description = "A utility belt for advanced users of python-requests"
@@ -5396,7 +5696,7 @@ description = "Pure-Python RSA implementation"
 optional = true
 python-versions = "<4,>=3.6"
 groups = ["main"]
-markers = "extra == \"api\""
+markers = "extra == \"api\" or extra == \"apolo\""
 files = [
     {file = "rsa-4.9.1-py3-none-any.whl", hash = "sha256:68635866661c6836b8d39430f97a996acbd61bfa49406748ea243539fe239762"},
     {file = "rsa-4.9.1.tar.gz", hash = "sha256:e7bdbfdb5497da4c07dfd35530e1a902659db6ff241e39d9953cad06ebd0ae75"},
@@ -5614,7 +5914,7 @@ description = "Sniff out which async library your code is running under"
 optional = true
 python-versions = ">=3.7"
 groups = ["main"]
-markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"offline-storage\""
+markers = "extra == \"api\" or extra == \"offline-llm\" or extra == \"offline\" or extra == \"evaluation\" or extra == \"observability\" or extra == \"apolo\" or extra == \"offline-storage\""
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
@@ -5888,6 +6188,19 @@ docs = ["setuptools-rust", "sphinx", "sphinx-rtd-theme"]
 testing = ["black (==22.3)", "datasets", "numpy", "pytest", "pytest-asyncio", "requests", "ruff"]
 
 [[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+optional = true
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
+
+[[package]]
 name = "tqdm"
 version = "4.67.1"
 description = "Fast, Extensible Progress Meter"
@@ -5955,7 +6268,7 @@ version = "6.0.12.20250915"
 description = "Typing stubs for PyYAML"
 optional = false
 python-versions = ">=3.9"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "types_pyyaml-6.0.12.20250915-py3-none-any.whl", hash = "sha256:e7d4d9e064e89a3b3cae120b4990cd370874d2bf12fa5f46c97018dd5d3c9ab6"},
     {file = "types_pyyaml-6.0.12.20250915.tar.gz", hash = "sha256:0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3"},
@@ -6133,13 +6446,31 @@ files = [
 ]
 
 [[package]]
+name = "websocket-client"
+version = "1.9.0"
+description = "WebSocket client for Python with low level API options"
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"apolo\""
+files = [
+    {file = "websocket_client-1.9.0-py3-none-any.whl", hash = "sha256:af248a825037ef591efbf6ed20cc5faa03d3b47b9e5a2230a529eeee1c1fc3ef"},
+    {file = "websocket_client-1.9.0.tar.gz", hash = "sha256:9e813624b6eb619999a97dc7958469217c3176312b3a16a4bd1bc7e08a46ec98"},
+]
+
+[package.extras]
+docs = ["Sphinx (>=6.0)", "myst-parser (>=2.0.0)", "sphinx_rtd_theme (>=1.1.0)"]
+optional = ["python-socks", "wsaccel"]
+test = ["pytest", "websockets"]
+
+[[package]]
 name = "wrapt"
 version = "1.17.2"
 description = "Module for decorators, wrappers and monkey patching."
 optional = true
 python-versions = ">=3.8"
 groups = ["main"]
-markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"observability\""
+markers = "extra == \"offline-llm\" or extra == \"offline\" or extra == \"apolo\" or extra == \"observability\""
 files = [
     {file = "wrapt-1.17.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3d57c572081fed831ad2d26fd430d565b76aa277ed1d30ff4d40670b1c0dd984"},
     {file = "wrapt-1.17.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:b5e251054542ae57ac7f3fba5d10bfff615b6c2fb09abeb37d2f1463f841ae22"},
@@ -6686,6 +7017,7 @@ cffi = ["cffi (>=1.17,<2.0) ; platform_python_implementation != \"PyPy\" and pyt
 
 [extras]
 api = ["PyJWT", "aiofiles", "aiohttp", "ascii_colors", "asyncpg", "configparser", "distro", "fastapi", "future", "httpcore", "httpx", "jiter", "json_repair", "nano-vectordb", "networkx", "numpy", "openai", "pandas", "passlib", "pipmaster", "psutil", "pydantic", "pypinyin", "python-dotenv", "python-jose", "python-multipart", "pytz", "setuptools", "tenacity", "tiktoken", "uvicorn", "xlsxwriter"]
+apolo = ["apolo-app-types"]
 evaluation = ["datasets", "httpx", "pytest", "pytest-asyncio", "ragas"]
 observability = ["langfuse"]
 offline = ["aioboto3", "anthropic", "asyncpg", "llama-index", "neo4j", "ollama", "openai", "openpyxl", "pycryptodome", "pymilvus", "pymongo", "pypdf2", "python-docx", "python-pptx", "qdrant-client", "redis", "voyageai", "zhipuai"]
@@ -6696,4 +7028,4 @@ offline-storage = ["asyncpg", "neo4j", "pymilvus", "pymongo", "qdrant-client", "
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11.0,<4.0"
-content-hash = "469a293749b67dd54cacd504349ff2a32fd8c9a15ea4605779ed68e83e699482"
+content-hash = "71f5ef042f255c259ba9c7fff488f738af7900f1acee12e8378aa58acc998a48"

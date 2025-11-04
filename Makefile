@@ -63,7 +63,7 @@ help:
 
 install setup:
 	$(POETRY) config virtualenvs.in-project true
-	$(POETRY) install --with dev
+	$(POETRY) install --with dev --extras apolo
 	$(POETRY) run pre-commit install
 
 lint format:

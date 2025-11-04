@@ -130,6 +130,11 @@ offline = [
     "llama-index>=0.9.0,<1.0.0",
 ]
 
+apolo = [
+    # Apolo App integration dependencies
+    "apolo-app-types>=25.9.0,<26.0.0",
+]
+
 evaluation = [
     # RAG evaluation dependencies (RAGAS framework)
     "ragas>=0.3.7",
@@ -156,11 +161,15 @@ Repository = "https://github.com/HKUDS/LightRAG"
 "Bug Tracker" = "https://github.com/HKUDS/LightRAG/issues"
 
 [tool.setuptools.packages.find]
-include = ["lightrag*"]
-exclude = ["data*", "tests*", "scripts*", "examples*", "dickens*", "reproduce*", "output_complete*", "rag_storage*", "inputs*"]
+where = [".", ".apolo/src"]
+include = ["lightrag*", "apolo_apps_lightrag*"]
+exclude = ["data*", "tests*", "scripts*", "examples*", "dickens*", "reproduce*", "output_complete*", "rag_storage*", "inputs*", ".apolo/tests*"]
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools.package-dir]
+apolo_apps_lightrag = ".apolo/src/apolo_apps_lightrag"
 
 [tool.setuptools.package-data]
 lightrag = ["api/webui/**/*", "api/static/**/*"]
@@ -173,6 +182,7 @@ name = "apolo-apps-lightrag"
 version = "0.0.1"
 description = "Apolo LightRAG application"
 authors = ["Apolo.us"]
+package-mode = false
 packages = [
   { include = "apolo_apps_lightrag", from = ".apolo/src" },
 ]
