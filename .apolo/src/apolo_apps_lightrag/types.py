@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -11,13 +11,13 @@ from apolo_app_types.protocols.common import (
 )
 from apolo_app_types.protocols.common.networking import HttpApi, RestAPI, ServiceAPI
 from apolo_app_types.protocols.common.openai_compat import (
-    OpenAICompatChatAPI,
-    OpenAICompatEmbeddingsAPI,
+    OpenAICompatChatAPI as OpenAICompatChatAPIBase,
+    OpenAICompatEmbeddingsAPI as OpenAICompatEmbeddingsAPIBase,
 )
 from apolo_app_types.protocols.postgres import CrunchyPostgresUserCredentials
 
 
-class OpenAICompatibleAPI(OpenAICompatChatAPI):
+class OpenAICompatChatAPI(OpenAICompatChatAPIBase):
     """OpenAI-compatible chat configuration for self-hosted or REST providers."""
 
     base_path: str = "/v1"
@@ -30,7 +30,7 @@ class OpenAICompatibleAPI(OpenAICompatChatAPI):
                 "Use for self-hosted services (for example vLLM) or OpenAI-compatible"
                 " REST providers. Supply a Hugging Face model."
             ),
-            meta_type=SchemaMetaType.INLINE,
+            meta_type=SchemaMetaType.INTEGRATION,
         ).as_json_schema_extra(),
     )
 
@@ -128,7 +128,7 @@ class OpenAIAPICloudProvider(RestAPI):
     )
 
 
-class OpenAICompatEmbeddingsProvider(OpenAICompatEmbeddingsAPI):
+class OpenAICompatEmbeddingsAPI(OpenAICompatEmbeddingsAPIBase):
     """OpenAI-compatible embeddings configuration for hosted providers."""
 
     model_config = ConfigDict(
@@ -136,7 +136,7 @@ class OpenAICompatEmbeddingsProvider(OpenAICompatEmbeddingsAPI):
         json_schema_extra=SchemaExtraMetadata(
             title="OpenAI Compatible API Embeddings",
             description="Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
-            meta_type=SchemaMetaType.INLINE,
+            meta_type=SchemaMetaType.INTEGRATION,
         ).as_json_schema_extra(),
     )
     host: str = Field(
@@ -150,10 +150,10 @@ class OpenAICompatEmbeddingsProvider(OpenAICompatEmbeddingsAPI):
         default=443,
         json_schema_extra=SchemaExtraMetadata(
             title="Port",
-            description="HTTPS port for the embeddings endpoint.",
+            description="Network port for the embeddings endpoint (defaults to 443).",
         ).as_json_schema_extra(),
     )
-    protocol: Literal["https"] = "https"
+    protocol: Literal["http", "https"] = "https"
     timeout: float | None = Field(
         default=60,
         json_schema_extra=SchemaExtraMetadata(
@@ -162,10 +162,14 @@ class OpenAICompatEmbeddingsProvider(OpenAICompatEmbeddingsAPI):
         ).as_json_schema_extra(),
     )
     dimensions: int = Field(
-        ...,
+        default=1024,
+        gt=0,
         json_schema_extra=SchemaExtraMetadata(
             title="Embedding Dimensions",
-            description="Embedding vector dimensionality reported by the provider.",
+            description=(
+                "Embedding vector dimensionality reported by the provider."
+                " Defaults to 1024 when unspecified."
+            ),
         ).as_json_schema_extra(),
     )
 
@@ -228,9 +232,9 @@ class OpenAIEmbeddingCloudProvider(RestAPI):
     )
 
 
-LLMProvider = OpenAICompatibleAPI | OpenAIAPICloudProvider
+LLMProvider = OpenAICompatChatAPI | OpenAIAPICloudProvider
 
-EmbeddingProvider = OpenAICompatEmbeddingsProvider | OpenAIEmbeddingCloudProvider
+EmbeddingProvider = OpenAICompatEmbeddingsAPI | OpenAIEmbeddingCloudProvider
 
 
 LightRAGLLMConfig = LLMProvider
@@ -263,39 +267,6 @@ class LightRAGAppInputs(AppInputs):
         ).as_json_schema_extra(),
     )
 
-    @field_validator("llm_config", mode="before")
-    @classmethod
-    def _select_llm_provider(cls, value: object) -> object:
-        if isinstance(value, (OpenAICompatibleAPI, OpenAIAPICloudProvider)):
-            return value
-        if isinstance(value, dict):
-            data: dict[str, Any] = value
-            hf_model = data.get("hf_model")
-            if hf_model:
-                return OpenAICompatibleAPI.model_validate(data)
-            model = data.get("model")
-            if model:
-                return OpenAIAPICloudProvider.model_validate(data)
-        return value
-
-    @field_validator("embedding_config", mode="before")
-    @classmethod
-    def _select_embedding_provider(cls, value: object) -> object:
-        if isinstance(
-            value,
-            (OpenAICompatEmbeddingsProvider, OpenAIEmbeddingCloudProvider),
-        ):
-            return value
-        if isinstance(value, dict):
-            data: dict[str, Any] = value
-            hf_model = data.get("hf_model")
-            if hf_model:
-                return OpenAICompatEmbeddingsProvider.model_validate(data)
-            model = data.get("model")
-            if model:
-                return OpenAIEmbeddingCloudProvider.model_validate(data)
-        return value
-
 
 class LightRAGAppOutputs(AppOutputs):
     """LightRAG outputs."""
@@ -309,8 +280,8 @@ __all__ = [
     "LightRAGEmbeddingConfig",
     "LightRAGLLMConfig",
     "LightRAGPersistence",
-    "OpenAICompatibleAPI",
+    "OpenAICompatChatAPI",
     "OpenAIAPICloudProvider",
-    "OpenAICompatEmbeddingsProvider",
+    "OpenAICompatEmbeddingsAPI",
     "OpenAIEmbeddingCloudProvider",
 ]

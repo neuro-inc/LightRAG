@@ -4,7 +4,6 @@ import pytest
 
 from apolo_app_types.protocols.common import IngressHttp, Preset
 from apolo_app_types.protocols.common.hugging_face import HuggingFaceModel
-from apolo_app_types.protocols.common.openai_compat import OpenAICompatChatAPI
 from apolo_app_types.protocols.postgres import CrunchyPostgresUserCredentials
 
 from apolo_apps_lightrag.inputs_processor import LightRAGInputsProcessor
@@ -12,8 +11,8 @@ from apolo_apps_lightrag.types import (
     LightRAGAppInputs,
     LightRAGPersistence,
     OpenAIAPICloudProvider,
-    OpenAICompatEmbeddingsProvider,
-    OpenAICompatibleAPI,
+    OpenAICompatEmbeddingsAPI,
+    OpenAICompatChatAPI,
     OpenAIEmbeddingCloudProvider,
 )
 
@@ -112,7 +111,7 @@ def test_light_rag_inputs_select_compat_provider_when_hf_model_present() -> None
         embedding_config=_default_embedding_provider(),
     )
 
-    assert isinstance(inputs.llm_config, OpenAICompatibleAPI)
+    assert isinstance(inputs.llm_config, OpenAICompatChatAPI)
     assert inputs.llm_config.hf_model is not None
     assert inputs.llm_config.hf_model.model_hf_name == "hf/awesome-model"
 
@@ -144,7 +143,7 @@ def test_light_rag_inputs_select_embedding_compat_when_hf_model_present() -> Non
         },
     )
 
-    assert isinstance(inputs.embedding_config, OpenAICompatEmbeddingsProvider)
+    assert isinstance(inputs.embedding_config, OpenAICompatEmbeddingsAPI)
     assert inputs.embedding_config.hf_model is not None
     assert inputs.embedding_config.hf_model.model_hf_name == "hf/embed-model"
 
@@ -167,7 +166,7 @@ def test_light_rag_inputs_select_embedding_compat_when_hf_model_present() -> Non
             "https://api.openai.com/v1",
         ),
         (
-            OpenAICompatibleAPI(
+            OpenAICompatChatAPI(
                 host="vllm.internal",
                 port=9443,
                 protocol="https",
@@ -193,7 +192,11 @@ async def test_inputs_processor_llm_variants(
     assert env["LLM_BINDING"] == "openai"
     assert env["LLM_MODEL"] == expected_model
     assert env["LLM_BINDING_HOST"] == expected_host
-    expected_api_key = getattr(llm_config, "api_key", None) or ""
+    expected_api_key = getattr(llm_config, "api_key", None)
+    if expected_api_key is None or (
+        isinstance(expected_api_key, str) and not expected_api_key.strip()
+    ):
+        expected_api_key = "no-auth"
     assert env["LLM_BINDING_API_KEY"] == expected_api_key
     assert env["OPENAI_API_KEY"] == expected_api_key
 
@@ -202,7 +205,7 @@ async def test_inputs_processor_llm_variants(
 async def test_inputs_processor_openai_compat_provider(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    llm_config = OpenAICompatibleAPI(
+    llm_config = OpenAICompatChatAPI(
         host="compat.example.com",
         port=9443,
         protocol="https",
@@ -263,7 +266,7 @@ async def test_inputs_processor_cloud_provider_base_path(
             1536,
         ),
         (
-            OpenAICompatEmbeddingsProvider(
+            OpenAICompatEmbeddingsAPI(
                 host="router.example.com",
                 port=8443,
                 protocol="https",
@@ -292,13 +295,19 @@ async def test_inputs_processor_embedding_variants(
     assert env["EMBEDDING_BINDING"] == expected_binding
     assert env["EMBEDDING_BINDING_HOST"] == expected_host
     assert env["EMBEDDING_DIM"] == expected_dim
+    expected_api_key = getattr(embedding_config, "api_key", None)
+    if expected_api_key is None or (
+        isinstance(expected_api_key, str) and not expected_api_key.strip()
+    ):
+        expected_api_key = "no-auth"
+    assert env["EMBEDDING_BINDING_API_KEY"] == expected_api_key
 
 
 @pytest.mark.asyncio
 async def test_inputs_processor_openai_compat_embedding(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    embedding_config = OpenAICompatEmbeddingsProvider(
+    embedding_config = OpenAICompatEmbeddingsAPI(
         host="embeddings.example.com",
         port=8080,
         protocol="https",
@@ -324,7 +333,7 @@ async def test_inputs_processor_openai_compat_embedding(
 async def test_inputs_processor_openai_compat_embedding_requires_model(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    embedding_config = OpenAICompatEmbeddingsProvider(
+    embedding_config = OpenAICompatEmbeddingsAPI(
         host="router.example.com",
         port=8443,
         protocol="https",
@@ -344,7 +353,7 @@ async def test_inputs_processor_openai_compat_embedding_requires_model(
 
 def test_extract_llm_config_requires_model_for_compatible() -> None:
     processor = LightRAGInputsProcessor(client=object())  # type: ignore[arg-type]
-    llm_config = OpenAICompatibleAPI(
+    llm_config = OpenAICompatChatAPI(
         host="router.example.com", protocol="https", port=443
     )
 
