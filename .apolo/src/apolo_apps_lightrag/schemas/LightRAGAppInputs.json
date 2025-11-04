@@ -729,17 +729,16 @@
           "x-title": "Hugging Face Model"
         },
         "dimensions": {
+          "default": 1024,
+          "exclusiveMinimum": 0,
           "title": "Dimensions",
           "type": "integer",
-          "x-description": "Embedding vector dimensionality reported by the provider.",
+          "x-description": "Embedding vector dimensionality reported by the provider. Defaults to 1024 when unspecified.",
           "x-is-advanced-field": false,
           "x-meta-type": "inline",
           "x-title": "Embedding Dimensions"
         }
       },
-      "required": [
-        "dimensions"
-      ],
       "title": "OpenAICompatEmbeddingsAPI",
       "type": "object",
       "x-description": "Use for OpenAI-compatible embeddings APIs (Self-hosted services).",

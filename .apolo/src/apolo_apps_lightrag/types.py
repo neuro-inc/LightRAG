@@ -162,10 +162,14 @@ class OpenAICompatEmbeddingsAPI(OpenAICompatEmbeddingsAPIBase):
         ).as_json_schema_extra(),
     )
     dimensions: int = Field(
-        ...,
+        default=1024,
+        gt=0,
         json_schema_extra=SchemaExtraMetadata(
             title="Embedding Dimensions",
-            description="Embedding vector dimensionality reported by the provider.",
+            description=(
+                "Embedding vector dimensionality reported by the provider."
+                " Defaults to 1024 when unspecified."
+            ),
         ).as_json_schema_extra(),
     )
 
