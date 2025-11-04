@@ -150,10 +150,10 @@ class OpenAICompatEmbeddingsAPI(OpenAICompatEmbeddingsAPIBase):
         default=443,
         json_schema_extra=SchemaExtraMetadata(
             title="Port",
-            description="HTTPS port for the embeddings endpoint.",
+            description="Network port for the embeddings endpoint (defaults to 443).",
         ).as_json_schema_extra(),
     )
-    protocol: Literal["https"] = "https"
+    protocol: Literal["http", "https"] = "https"
     timeout: float | None = Field(
         default=60,
         json_schema_extra=SchemaExtraMetadata(

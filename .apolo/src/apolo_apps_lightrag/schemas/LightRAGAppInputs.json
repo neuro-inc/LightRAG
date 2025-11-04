@@ -658,14 +658,17 @@
           "default": 443,
           "title": "Port",
           "type": "integer",
-          "x-description": "HTTPS port for the embeddings endpoint.",
+          "x-description": "Network port for the embeddings endpoint (defaults to 443).",
           "x-is-advanced-field": false,
           "x-meta-type": "inline",
           "x-title": "Port"
         },
         "protocol": {
-          "const": "https",
           "default": "https",
+          "enum": [
+            "http",
+            "https"
+          ],
           "title": "Protocol",
           "type": "string"
         },
