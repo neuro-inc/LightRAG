@@ -366,19 +366,19 @@ trio = ["trio (>=0.26.1)"]
 
 [[package]]
 name = "apolo-app-types"
-version = "25.11.0"
+version = "25.11.2"
 description = "Apolo Platform App Types."
 optional = true
 python-versions = "<4.0,>=3.9.0"
 groups = ["main"]
 markers = "extra == \"apolo\""
 files = [
-    {file = "apolo_app_types-25.11.0-py3-none-any.whl", hash = "sha256:54827fa019353b4341ccd167f98b9ba1214233a0ecc3595e5aaf308b73949e72"},
-    {file = "apolo_app_types-25.11.0.tar.gz", hash = "sha256:86d6584e0db2f5c5017e8c811f6d8ffd4a7d1d80c35da42f0381edf2a0588c3b"},
+    {file = "apolo_app_types-25.11.2-py3-none-any.whl", hash = "sha256:36d0217ec98ec0fb6549308e0f72ec2f50f357dd33321f3933baffcfdceacd0a"},
+    {file = "apolo_app_types-25.11.2.tar.gz", hash = "sha256:cf8e10e5ec14b4692e7f31bcfd459824e4a38f7f00736a5bdf24a8bca69847a3"},
 ]
 
 [package.dependencies]
-apolo-sdk = ">=25.9.1,<26.0.0"
+apolo-sdk = ">=25.11.0,<26.0.0"
 click = ">=8.0.3,<9.0.0"
 httpx = ">=0.28.0,<0.29.0"
 jsonref = ">=1.1.0,<2.0.0"

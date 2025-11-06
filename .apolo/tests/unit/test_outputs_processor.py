@@ -26,21 +26,21 @@ async def test_generate_outputs(monkeypatch: pytest.MonkeyPatch) -> None:
 
     async def fake_get_internal_external_web_urls(labels: dict[str, str]):
         assert labels == {
-            "app.kubernetes.io/name": "lightrag",
+            "application": "lightrag",
             INSTANCE_LABEL: "instance-123",
         }
         return internal_web, external_web
 
     async def fake_get_service_host_port(match_labels: dict[str, str]):
         assert match_labels == {
-            "app.kubernetes.io/name": "lightrag",
+            "application": "lightrag",
             INSTANCE_LABEL: "instance-123",
         }
         return "service.local", 9621
 
     async def fake_get_ingress_host_port(match_labels: dict[str, str]):
         assert match_labels == {
-            "app.kubernetes.io/name": "lightrag",
+            "application": "lightrag",
             INSTANCE_LABEL: "instance-123",
         }
         return "service.example.com", 443
@@ -75,7 +75,7 @@ async def test_generate_outputs_without_service_hosts(
     processor = LightRAGOutputsProcessor()
 
     async def fake_get_internal_external_web_urls(labels: dict[str, str]):
-        assert labels["app.kubernetes.io/name"] == "lightrag"
+        assert labels["application"] == "lightrag"
         return None, None
 
     async def fake_get_service_host_port(match_labels: dict[str, str]):
