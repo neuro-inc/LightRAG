@@ -1,0 +1,287 @@
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from apolo_app_types import AppInputs, AppOutputs
+from apolo_app_types.protocols.common import (
+    IngressHttp,
+    Preset,
+    SchemaExtraMetadata,
+    SchemaMetaType,
+)
+from apolo_app_types.protocols.common.networking import HttpApi, RestAPI, ServiceAPI
+from apolo_app_types.protocols.common.openai_compat import (
+    OpenAICompatChatAPI as OpenAICompatChatAPIBase,
+    OpenAICompatEmbeddingsAPI as OpenAICompatEmbeddingsAPIBase,
+)
+from apolo_app_types.protocols.postgres import CrunchyPostgresUserCredentials
+
+
+class OpenAICompatChatAPI(OpenAICompatChatAPIBase):
+    """OpenAI-compatible chat configuration for self-hosted or REST providers."""
+
+    base_path: str = "/v1"
+
+    model_config = ConfigDict(
+        protected_namespaces=(),
+        json_schema_extra=SchemaExtraMetadata(
+            title="OpenAI Compatible API",
+            description=(
+                "Use for self-hosted services (for example vLLM) or OpenAI-compatible"
+                " REST providers. Supply a Hugging Face model."
+            ),
+            meta_type=SchemaMetaType.INTEGRATION,
+        ).as_json_schema_extra(),
+    )
+
+    api_key: str | None = Field(
+        default=None,
+        json_schema_extra=SchemaExtraMetadata(
+            title="API Key",
+            description="Optional API key used to access the compatible endpoint.",
+        ).as_json_schema_extra(),
+    )
+
+
+class LightRAGPersistence(BaseModel):
+    model_config = ConfigDict(
+        protected_namespaces=(),
+        json_schema_extra=SchemaExtraMetadata(
+            title="LightRAG Persistence",
+            description="Configure persistent storage for LightRAG data and inputs.",
+        ).as_json_schema_extra(),
+    )
+
+    rag_storage_size: int = Field(
+        default=10,
+        gt=0,
+        json_schema_extra=SchemaExtraMetadata(
+            title="RAG Storage Size (GB)",
+            description="Size of the persistent volume for RAG data storage.",
+        ).as_json_schema_extra(),
+    )
+    inputs_storage_size: int = Field(
+        default=5,
+        gt=0,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Inputs Storage Size (GB)",
+            description="Size of the persistent volume for input files.",
+        ).as_json_schema_extra(),
+    )
+
+    @field_validator("rag_storage_size", "inputs_storage_size", mode="before")
+    @classmethod
+    def validate_storage_size(cls, value: int) -> int:
+        if value and isinstance(value, int) and value < 1:
+            error_message = "Storage size must be greater than 1GB."
+            raise ValueError(error_message)
+        return value
+
+
+class OpenAIAPICloudProvider(RestAPI):
+    """Hosted OpenAI-compatible provider configuration."""
+
+    model_config = ConfigDict(
+        protected_namespaces=(),
+        json_schema_extra=SchemaExtraMetadata(
+            title="OpenAI API Cloud Provider",
+            description="Use for hosted OpenAI-compatible APIs such as OpenAI or OpenRouter.",
+            meta_type=SchemaMetaType.INLINE,
+        ).as_json_schema_extra(),
+    )
+
+    port: int | None = Field(
+        default=None,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Port",
+            description="Optional port override for the provider endpoint.",
+        ).as_json_schema_extra(),
+    )
+    protocol: Literal["https"] = "https"
+    timeout: int | None = Field(
+        default=60,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Timeout",
+            description="Connection timeout in seconds.",
+        ).as_json_schema_extra(),
+    )
+    base_path: str = Field(
+        default="/v1",
+        json_schema_extra=SchemaExtraMetadata(
+            title="Base Path",
+            description="Path prefix for the API (defaults to `/v1`).",
+        ).as_json_schema_extra(),
+    )
+    model: str = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Model",
+            description="Model identifier exposed by the provider (for example `gpt-4o`).",
+        ).as_json_schema_extra(),
+    )
+    api_key: str = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="API Key",
+            description="API key used to authenticate with the provider.",
+        ).as_json_schema_extra(),
+    )
+
+
+class OpenAICompatEmbeddingsAPI(OpenAICompatEmbeddingsAPIBase):
+    """OpenAI-compatible embeddings configuration for hosted providers."""
+
+    model_config = ConfigDict(
+        protected_namespaces=(),
+        json_schema_extra=SchemaExtraMetadata(
+            title="OpenAI Compatible API Embeddings",
+            description="Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
+            meta_type=SchemaMetaType.INTEGRATION,
+        ).as_json_schema_extra(),
+    )
+    host: str = Field(
+        default="api.openai.com",
+        json_schema_extra=SchemaExtraMetadata(
+            title="Host",
+            description="Hostname of the OpenAI-compatible embeddings endpoint.",
+        ).as_json_schema_extra(),
+    )
+    port: int = Field(
+        default=443,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Port",
+            description="Network port for the embeddings endpoint (defaults to 443).",
+        ).as_json_schema_extra(),
+    )
+    protocol: Literal["http", "https"] = "https"
+    timeout: float | None = Field(
+        default=60,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Timeout",
+            description="Connection timeout in seconds.",
+        ).as_json_schema_extra(),
+    )
+    dimensions: int = Field(
+        default=1024,
+        gt=0,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Embedding Dimensions",
+            description=(
+                "Embedding vector dimensionality reported by the provider."
+                " Defaults to 1024 when unspecified."
+            ),
+        ).as_json_schema_extra(),
+    )
+
+
+class OpenAIEmbeddingCloudProvider(RestAPI):
+    """Official OpenAI embeddings configuration."""
+
+    model_config = ConfigDict(
+        protected_namespaces=(),
+        json_schema_extra=SchemaExtraMetadata(
+            title="OpenAI Embeddings Cloud Provider",
+            description="Use the official OpenAI embeddings endpoint with recommended defaults.",
+            meta_type=SchemaMetaType.INLINE,
+        ).as_json_schema_extra(),
+    )
+
+    port: int | None = Field(
+        default=None,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Port",
+            description="Optional port override for the endpoint.",
+        ).as_json_schema_extra(),
+    )
+    protocol: Literal["https"] = "https"
+    timeout: int | None = Field(
+        default=60,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Timeout",
+            description="Connection timeout in seconds.",
+        ).as_json_schema_extra(),
+    )
+    base_path: str = Field(
+        default="/v1",
+        json_schema_extra=SchemaExtraMetadata(
+            title="Base Path",
+            description="Path prefix for the embeddings API (defaults to `/v1`).",
+        ).as_json_schema_extra(),
+    )
+    provider: Literal["openai"] = "openai"
+    model: str = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Model",
+            description="OpenAI embedding model identifier.",
+        ).as_json_schema_extra(),
+    )
+    api_key: str = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="API Key",
+            description="OpenAI API key.",
+        ).as_json_schema_extra(),
+    )
+    dimensions: int = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Embedding Dimensions",
+            description="Embedding vector dimensionality returned by the model.",
+        ).as_json_schema_extra(),
+    )
+
+
+LLMProvider = OpenAICompatChatAPI | OpenAIAPICloudProvider
+
+EmbeddingProvider = OpenAICompatEmbeddingsAPI | OpenAIEmbeddingCloudProvider
+
+
+LightRAGLLMConfig = LLMProvider
+LightRAGEmbeddingConfig = EmbeddingProvider
+
+
+class LightRAGAppInputs(AppInputs):
+    preset: Preset
+    ingress_http: IngressHttp
+    pgvector_user: CrunchyPostgresUserCredentials
+    llm_config: LightRAGLLMConfig = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="LLM Configuration",
+            description="LLM provider configuration.",
+        ).as_json_schema_extra(),
+    )
+    embedding_config: LightRAGEmbeddingConfig = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Embedding Configuration",
+            description="Embedding provider configuration.",
+        ).as_json_schema_extra(),
+    )
+    persistence: LightRAGPersistence = Field(
+        ...,
+        json_schema_extra=SchemaExtraMetadata(
+            title="Persistence Configuration",
+            description="Configure persistent storage for LightRAG data and inputs.",
+        ).as_json_schema_extra(),
+    )
+
+
+class LightRAGAppOutputs(AppOutputs):
+    """LightRAG outputs."""
+
+    server_url: ServiceAPI[HttpApi] | None = None
+
+
+__all__ = [
+    "LightRAGAppInputs",
+    "LightRAGAppOutputs",
+    "LightRAGEmbeddingConfig",
+    "LightRAGLLMConfig",
+    "LightRAGPersistence",
+    "OpenAICompatChatAPI",
+    "OpenAIAPICloudProvider",
+    "OpenAICompatEmbeddingsAPI",
+    "OpenAIEmbeddingCloudProvider",
+]
