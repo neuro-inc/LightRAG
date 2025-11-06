@@ -251,18 +251,18 @@ trio = ["trio (>=0.26.1)"]
 
 [[package]]
 name = "apolo-app-types"
-version = "25.10.17"
+version = "25.11.2"
 description = "Apolo Platform App Types."
 optional = false
 python-versions = "<4.0,>=3.9.0"
 groups = ["main"]
 files = [
-    {file = "apolo_app_types-25.10.17-py3-none-any.whl", hash = "sha256:daf77a44a47fe94f8c356279c36a49be3c34db2c4d10f131098d81e4503d1129"},
-    {file = "apolo_app_types-25.10.17.tar.gz", hash = "sha256:b01a2d54a4674e7124c96388d4ce048997f7af1bad72582271ba0339fcfff2e0"},
+    {file = "apolo_app_types-25.11.2-py3-none-any.whl", hash = "sha256:36d0217ec98ec0fb6549308e0f72ec2f50f357dd33321f3933baffcfdceacd0a"},
+    {file = "apolo_app_types-25.11.2.tar.gz", hash = "sha256:cf8e10e5ec14b4692e7f31bcfd459824e4a38f7f00736a5bdf24a8bca69847a3"},
 ]
 
 [package.dependencies]
-apolo-sdk = ">=25.9.1,<26.0.0"
+apolo-sdk = ">=25.11.0,<26.0.0"
 click = ">=8.0.3,<9.0.0"
 httpx = ">=0.28.0,<0.29.0"
 jsonref = ">=1.1.0,<2.0.0"
@@ -274,14 +274,14 @@ yarl = ">=1.22.0,<2.0.0"
 
 [[package]]
 name = "apolo-sdk"
-version = "25.9.1"
+version = "25.11.0"
 description = "Apolo SDK"
 optional = false
 python-versions = ">=3.9.0"
 groups = ["main"]
 files = [
-    {file = "apolo_sdk-25.9.1-py3-none-any.whl", hash = "sha256:a4049c707b7eed06b33f0714823b8b7588ed0c9708e8a2aa864b9abfe142ceff"},
-    {file = "apolo_sdk-25.9.1.tar.gz", hash = "sha256:5069eb3202927b357cc2bfe3f97538da11463c5e151c6f0ddc758a03534dbb3f"},
+    {file = "apolo_sdk-25.11.0-py3-none-any.whl", hash = "sha256:b437916d3fff16ff7c2a1f76c0e0114dc437fc41cffb765fd9766243669baf78"},
+    {file = "apolo_sdk-25.11.0.tar.gz", hash = "sha256:6bbad71e12eddf333504de0465ab8d0dc05e55603f8ec3fcef5c92548490f53b"},
 ]
 
 [package.dependencies]
@@ -292,7 +292,7 @@ azure-storage-blob = ">=12.8.1,<12.9.0 || >12.9.0"
 certifi = "*"
 google-auth = ">=2.0.2"
 neuro-admin-client = "25.9.2"
-neuro-config-client = "25.9.4"
+neuro-config-client = "25.10.0"
 packaging = ">=20.4"
 python-dateutil = ">=2.7.0"
 python-jose = ">=3.3.0"
@@ -1338,14 +1338,14 @@ yarl = ">=1.10"
 
 [[package]]
 name = "neuro-config-client"
-version = "25.9.4"
+version = "25.10.0"
 description = "Internal client for Neu.ro config service"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "neuro_config_client-25.9.4-py3-none-any.whl", hash = "sha256:b2a3ab0bafc494111f38f6f09f6760c96f72487ff61b4e8b1f9ac65685af5ece"},
-    {file = "neuro_config_client-25.9.4.tar.gz", hash = "sha256:ee6b76de0be163ea0cfbbe34edd99a26007f14b797aa2dd19af5412778022418"},
+    {file = "neuro_config_client-25.10.0-py3-none-any.whl", hash = "sha256:d1e9c35b6b5069ae72846e2bb10178dccfb0fc2d60dcdedadd8c5dc8261e6b45"},
+    {file = "neuro_config_client-25.10.0.tar.gz", hash = "sha256:c3db71b610fe258ff5ee54a827d0ead613e84efceae22b1215b5f3c1febb3c98"},
 ]
 
 [package.dependencies]

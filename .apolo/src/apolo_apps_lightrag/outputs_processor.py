@@ -20,7 +20,7 @@ async def _generate_lightrag_outputs(
     helm_values: dict[str, t.Any],
     app_instance_id: str,
 ) -> LightRAGAppOutputs:
-    labels = {"app.kubernetes.io/name": "lightrag", INSTANCE_LABEL: app_instance_id}
+    labels = {"application": "mlflow", INSTANCE_LABEL: app_instance_id}
     internal_web_app_url, external_web_app_url = await get_internal_external_web_urls(
         labels
     )
