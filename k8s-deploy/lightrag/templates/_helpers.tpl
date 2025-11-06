@@ -19,6 +19,7 @@ Common labels
 app.kubernetes.io/name: {{ include "lightrag.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+application: {{ include "lightrag.name" . }}
 {{- end }}
 
 {{/*
@@ -27,6 +28,7 @@ Selector labels
 {{- define "lightrag.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "lightrag.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+application: {{ include "lightrag.name" . }}
 {{- end }}
 
 {{/*
