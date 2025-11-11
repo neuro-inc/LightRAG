@@ -21,8 +21,33 @@ GITHUB_USERNAME := $(shell echo "$$APOLO_GITHUB_TOKEN" | base64 -d 2>/dev/null |
 POETRY ?= poetry
 IMAGE_NAME ?= app-lightrag
 HOOKS_IMAGE_TARGET ?= ghcr.io/neuro-inc/lightrag
-DEFAULT_BRANCH_TAG := $(shell bash -lc 'branch=$${BRANCH_NAME:-$${GITHUB_HEAD_REF:-$${GITHUB_REF_NAME:-}}}; if [ -z "$$branch" ]; then branch=$$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ""); fi; if [ "$$branch" = "HEAD" ] || [ -z "$$branch" ]; then branch=$$(git rev-parse --short HEAD 2>/dev/null || echo "latest"); fi; branch=$$(printf "%s" "$$branch" | sed -E "s|^refs/heads/||"); branch=$$(printf "%s" "$$branch" | sed -E "s|[^A-Za-z0-9_.-]|-|g"); branch=$$(printf "%s" "$$branch" | tr "[:upper:]" "[:lower:]"); branch=$${branch:-latest}; echo $$branch')
-IMAGE_TAG ?= $(DEFAULT_BRANCH_TAG)
+# Determine the desired image tag: prefer git/CI tag names (keeping a leading "v"),
+# otherwise fall back to a sanitized branch name or short commit hash.
+DEFAULT_REF_TAG := $(shell bash -lc '\
+	ref_name=$${GITHUB_REF_NAME:-}; \
+	ref_type=$${GITHUB_REF_TYPE:-}; \
+	if [ "$$ref_type" = "tag" ] && [ -n "$$ref_name" ]; then \
+		echo "$$ref_name"; \
+		exit 0; \
+	fi; \
+	tag=$$(git describe --tags --exact-match 2>/dev/null || true); \
+	if [ -n "$$tag" ]; then \
+		echo "$$tag"; \
+		exit 0; \
+	fi; \
+	branch=$${BRANCH_NAME:-$${GITHUB_HEAD_REF:-$$ref_name}}; \
+	if [ -z "$$branch" ]; then \
+		branch=$$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ""); \
+	fi; \
+	if [ "$$branch" = "HEAD" ] || [ -z "$$branch" ]; then \
+		branch=$$(git rev-parse --short HEAD 2>/dev/null || echo "latest"); \
+	fi; \
+	branch=$$(printf "%s" "$$branch" | sed -E "s|^refs/heads/||"); \
+	branch=$$(printf "%s" "$$branch" | sed -E "s|[^A-Za-z0-9_.-]|-|g"); \
+	branch=$$(printf "%s" "$$branch" | tr "[:upper:]" "[:lower:]"); \
+	branch=$${branch:-latest}; \
+	echo "$$branch"')
+IMAGE_TAG ?= $(DEFAULT_REF_TAG)
 
 APP_CHART_NAME := lightrag
 APP_CHART_DIR := k8s-deploy/$(APP_CHART_NAME)
