@@ -72,3 +72,4 @@ download_models_hf.py
 # Cline files
 memory-bank/
 .coverage*
+!.env.local
