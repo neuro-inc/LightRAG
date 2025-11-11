@@ -14,7 +14,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY README.md poetry.lock pyproject.toml .
-RUN pip --no-cache-dir install poetry && poetry install --no-root --no-cache
+# pip 25.x sporadically removes dependency metadata mid-transaction which breaks Poetry;
+# stay on a stable pip 24.x release until the upstream issue is resolved.
+RUN python -m pip install --no-cache-dir "pip<25" && \
+    pip --no-cache-dir install poetry && \
+    poetry install --no-root --no-cache
 
 COPY .apolo .apolo
 RUN poetry install --only-root --no-cache
