@@ -169,7 +169,9 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
             "POSTGRES_HOST": input_.pgvector_user.pgbouncer_host,
             "POSTGRES_PORT": input_.pgvector_user.pgbouncer_port,
             "POSTGRES_USER": input_.pgvector_user.user,
-            "POSTGRES_PASSWORD": serialize_optional_secret(input_.pgvector_user.password, secret_name=app_secrets_name),
+            "POSTGRES_PASSWORD": serialize_optional_secret(
+                input_.pgvector_user.password, secret_name=app_secrets_name
+            ),
             "POSTGRES_DATABASE": input_.pgvector_user.dbname,
             "POSTGRES_WORKSPACE": "default",
         }
