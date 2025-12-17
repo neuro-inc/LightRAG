@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from apolo_app_types.protocols.common import IngressHttp, Preset
+from apolo_app_types.protocols.common import ApoloSecret, IngressHttp, Preset
 from apolo_app_types.protocols.common.hugging_face import HuggingFaceModel
 from apolo_app_types.protocols.postgres import CrunchyPostgresUserCredentials
 
@@ -26,7 +26,7 @@ def _make_base_inputs(
         ingress_http=IngressHttp(),
         pgvector_user=CrunchyPostgresUserCredentials(
             user="rag",
-            password="secret",
+            password=ApoloSecret(key="secret"),
             host="postgres.internal",
             port=5432,
             pgbouncer_host="pgbouncer.internal",
