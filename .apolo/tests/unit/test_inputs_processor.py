@@ -5,7 +5,7 @@ from typing import Any
 import pytest
 
 from apolo_app_types.app_types import AppType
-from apolo_app_types.protocols.common import IngressHttp, Preset
+from apolo_app_types.protocols.common import ApoloSecret, IngressHttp, Preset
 from apolo_app_types.protocols.postgres import CrunchyPostgresUserCredentials
 
 from apolo_apps_lightrag.inputs_processor import LightRAGInputsProcessor
@@ -38,7 +38,7 @@ async def test_gen_extra_values_merges_sources(monkeypatch: pytest.MonkeyPatch) 
         ingress_http=IngressHttp(),
         pgvector_user=CrunchyPostgresUserCredentials(
             user="rag",
-            password="secret",
+            password=ApoloSecret(key="secret"),
             host="postgres.internal",
             port=5432,
             pgbouncer_host="pgbouncer.internal",

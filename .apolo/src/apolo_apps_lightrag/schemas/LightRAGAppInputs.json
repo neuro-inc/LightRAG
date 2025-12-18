@@ -14,6 +14,7 @@
       "type": "object",
       "x-description": "Use Apolo platform's built-in authentication and authorization. Requires authenticated user credentials with appropriate permissions.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Apolo Platform Authentication",
       "x-type": "ApoloAuth"
@@ -25,6 +26,7 @@
           "type": "string",
           "x-description": "Provide the Apolo Storage path starting with `storage:` to locate your files.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Storage Path"
         }
@@ -36,6 +38,7 @@
       "type": "object",
       "x-description": "Specify the path within the Apolo Files application to read from or write to.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Apolo Files Path",
       "x-type": "ApoloFilesFile"
@@ -54,6 +57,7 @@
       "type": "object",
       "x-description": "Apolo Secret Configuration.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Secret",
       "x-type": "ApoloSecret"
@@ -66,6 +70,7 @@
           "type": "string",
           "x-description": "Name of the authentication middleware (with namespace) to apply to ingress traffic.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Middleware Name"
         }
@@ -77,6 +82,7 @@
       "type": "object",
       "x-description": "Configure authentication middleware for ingress traffic.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "Authentication Ingress Middleware",
       "x-type": "AuthIngressMiddleware"
@@ -88,15 +94,13 @@
           "type": "string",
           "x-description": "Username for the Postgres user.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Postgres User"
         },
         "password": {
-          "title": "Password",
-          "type": "string",
+          "$ref": "#/$defs/ApoloSecret",
           "x-description": "Password for the Postgres user.",
-          "x-is-advanced-field": false,
-          "x-meta-type": "inline",
           "x-title": "Postgres Password"
         },
         "host": {
@@ -104,6 +108,7 @@
           "type": "string",
           "x-description": "Host of the Postgres instance.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Postgres Host"
         },
@@ -113,6 +118,7 @@
           "type": "integer",
           "x-description": "Port of the Postgres instance.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Postgres Port"
         },
@@ -121,6 +127,7 @@
           "type": "string",
           "x-description": "Host of the PGBouncer instance.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "PGBouncer Host"
         },
@@ -130,6 +137,7 @@
           "type": "integer",
           "x-description": "Port of the PGBouncer instance.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "PGBouncer Port"
         },
@@ -145,58 +153,21 @@
           "default": null,
           "title": "Dbname"
         },
-        "jdbc_uri": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Jdbc Uri"
-        },
-        "pgbouncer_jdbc_uri": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Pgbouncer Jdbc Uri"
-        },
         "pgbouncer_uri": {
           "anyOf": [
             {
-              "type": "string"
+              "$ref": "#/$defs/ApoloSecret"
             },
             {
               "type": "null"
             }
           ],
-          "default": null,
-          "title": "Pgbouncer Uri"
-        },
-        "uri": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Uri"
+          "default": null
         },
         "postgres_uri": {
           "anyOf": [
             {
-              "$ref": "#/$defs/PostgresURI"
+              "$ref": "#/$defs/ApoloSecret"
             },
             {
               "type": "null"
@@ -223,6 +194,7 @@
       "type": "object",
       "x-description": "Configuration for Crunchy Postgres user credentials.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "Postgres User Credentials",
       "x-type": "CrunchyPostgresUserCredentials"
@@ -249,6 +221,7 @@
       "type": "object",
       "x-description": "Use a custom authentication middleware for this ingress. Allows integration with custom authentication providers.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Custom Authentication",
       "x-type": "CustomAuth"
@@ -269,6 +242,7 @@
       "type": "object",
       "x-description": "Configuration for the Hugging Face cache.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "Hugging Face Cache",
       "x-type": "HuggingFaceCache"
@@ -280,6 +254,7 @@
           "type": "string",
           "x-description": "The name of the Hugging Face model.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Hugging Face Model Name"
         },
@@ -295,6 +270,7 @@
           "default": null,
           "x-description": "Provide a Hugging Face API token linked to an account with access to the model specified above. This token will be used to download model files from the Hugging Face Hub, including gated or private repositories where applicable.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "integration",
           "x-title": "Hugging Face Token"
         },
@@ -310,6 +286,7 @@
           "default": null,
           "x-description": "Enables caching of model files to reduce redundant downloads and speed up load times.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Model Cache"
         }
@@ -321,6 +298,7 @@
       "type": "object",
       "x-description": "Configure the Hugging Face model. Ensure it is available on the Hugging Face Hub and provide an API token with access rights if the repository is gated.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "Hugging Face Model",
       "x-type": "HuggingFaceModel"
@@ -333,6 +311,7 @@
           "type": "string",
           "x-description": "The name of the Hugging Face token.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Token Name"
         },
@@ -350,6 +329,7 @@
       "type": "object",
       "x-description": "Provide a Hugging Face API token linked to an account with access to the model specified above. This token will be used to download model files from the Hugging Face Hub, including gated or private repositories where applicable.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "Hugging Face Token",
       "x-type": "HuggingFaceToken"
@@ -371,6 +351,7 @@
           "title": "Auth",
           "x-description": "Configure authentication for this ingress. Choose Apolo platform authentication, custom middleware, or no authentication.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Authentication"
         }
@@ -379,6 +360,7 @@
       "type": "object",
       "x-description": "Enable access to your application over the internet using HTTPS.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Enable HTTP Ingress",
       "x-type": "IngressHttp"
@@ -392,6 +374,7 @@
           "type": "integer",
           "x-description": "Size of the persistent volume for RAG data storage.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "RAG Storage Size (GB)"
         },
@@ -402,6 +385,7 @@
           "type": "integer",
           "x-description": "Size of the persistent volume for input files.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Inputs Storage Size (GB)"
         }
@@ -410,6 +394,7 @@
       "type": "object",
       "x-description": "Configure persistent storage for LightRAG data and inputs.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "LightRAG Persistence"
     },
@@ -427,6 +412,7 @@
       "type": "object",
       "x-description": "Disable authentication for this ingress. The application will be publicly accessible without any authentication.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "No Authentication",
       "x-type": "NoAuth"
@@ -439,6 +425,7 @@
           "type": "string",
           "x-description": "The hostname of the HTTP endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Hostname"
         },
@@ -455,6 +442,7 @@
           "title": "Port",
           "x-description": "Optional port override for the provider endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Port"
         },
@@ -477,6 +465,7 @@
           "title": "Timeout",
           "x-description": "Connection timeout in seconds.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Timeout"
         },
@@ -486,6 +475,7 @@
           "type": "string",
           "x-description": "Path prefix for the API (defaults to `/v1`).",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Base Path"
         },
@@ -500,6 +490,7 @@
           "type": "string",
           "x-description": "Model identifier exposed by the provider (for example `gpt-4o`).",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Model"
         },
@@ -508,6 +499,7 @@
           "type": "string",
           "x-description": "API key used to authenticate with the provider.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "API Key"
         }
@@ -521,6 +513,7 @@
       "type": "object",
       "x-description": "Use for hosted OpenAI-compatible APIs such as OpenAI or OpenRouter.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "OpenAI API Cloud Provider",
       "x-type": "OpenAIAPICloudProvider"
@@ -533,6 +526,7 @@
           "type": "string",
           "x-description": "The hostname of the HTTP endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Hostname"
         },
@@ -543,6 +537,7 @@
           "type": "integer",
           "x-description": "The port of the HTTP endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Port"
         },
@@ -552,6 +547,7 @@
           "type": "string",
           "x-description": "The protocol to use, e.g., http or https.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Protocol"
         },
@@ -568,6 +564,7 @@
           "title": "Timeout",
           "x-description": "Connection timeout in seconds.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Connection Timeout"
         },
@@ -611,6 +608,7 @@
           "default": null,
           "x-description": "Configure the Hugging Face model. Ensure it is available on the Hugging Face Hub and provide an API token with access rights if the repository is gated.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "integration",
           "x-title": "Hugging Face Model"
         },
@@ -627,6 +625,7 @@
           "title": "Api Key",
           "x-description": "Optional API key used to access the compatible endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "API Key"
         }
@@ -638,6 +637,7 @@
       "type": "object",
       "x-description": "Use for self-hosted services (for example vLLM) or OpenAI-compatible REST providers. Supply a Hugging Face model.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "OpenAI Compatible API",
       "x-type": "OpenAICompatChatAPI"
@@ -651,6 +651,7 @@
           "type": "string",
           "x-description": "Hostname of the OpenAI-compatible embeddings endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Host"
         },
@@ -660,6 +661,7 @@
           "type": "integer",
           "x-description": "Network port for the embeddings endpoint (defaults to 443).",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Port"
         },
@@ -685,6 +687,7 @@
           "title": "Timeout",
           "x-description": "Connection timeout in seconds.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Timeout"
         },
@@ -728,6 +731,7 @@
           "default": null,
           "x-description": "Configure the Hugging Face model. Ensure it is available on the Hugging Face Hub and provide an API token with access rights if the repository is gated.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "integration",
           "x-title": "Hugging Face Model"
         },
@@ -738,6 +742,7 @@
           "type": "integer",
           "x-description": "Embedding vector dimensionality reported by the provider. Defaults to 1024 when unspecified.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Embedding Dimensions"
         }
@@ -746,6 +751,7 @@
       "type": "object",
       "x-description": "Use for OpenAI-compatible embeddings APIs (Self-hosted services).",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "integration",
       "x-title": "OpenAI Compatible API Embeddings",
       "x-type": "OpenAICompatEmbeddingsAPI"
@@ -758,6 +764,7 @@
           "type": "string",
           "x-description": "The hostname of the HTTP endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Hostname"
         },
@@ -774,6 +781,7 @@
           "title": "Port",
           "x-description": "Optional port override for the endpoint.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Port"
         },
@@ -796,6 +804,7 @@
           "title": "Timeout",
           "x-description": "Connection timeout in seconds.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Timeout"
         },
@@ -805,6 +814,7 @@
           "type": "string",
           "x-description": "Path prefix for the embeddings API (defaults to `/v1`).",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Base Path"
         },
@@ -825,6 +835,7 @@
           "type": "string",
           "x-description": "OpenAI embedding model identifier.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Model"
         },
@@ -833,6 +844,7 @@
           "type": "string",
           "x-description": "OpenAI API key.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "API Key"
         },
@@ -841,6 +853,7 @@
           "type": "integer",
           "x-description": "Embedding vector dimensionality returned by the model.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Embedding Dimensions"
         }
@@ -855,32 +868,10 @@
       "type": "object",
       "x-description": "Use the official OpenAI embeddings endpoint with recommended defaults.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "OpenAI Embeddings Cloud Provider",
       "x-type": "OpenAIEmbeddingCloudProvider"
-    },
-    "PostgresURI": {
-      "description": "Configuration for the Postgres connection URI.",
-      "properties": {
-        "uri": {
-          "title": "Uri",
-          "type": "string",
-          "x-description": "Specify full Postgres connection URI. E.g. 'postgresql://user:pass@host:5432/db'",
-          "x-is-advanced-field": false,
-          "x-meta-type": "inline",
-          "x-title": "URI"
-        }
-      },
-      "required": [
-        "uri"
-      ],
-      "title": "PostgresURI",
-      "type": "object",
-      "x-description": "Full Postgres connection URI configuration.",
-      "x-is-advanced-field": false,
-      "x-meta-type": "inline",
-      "x-title": "Postgres URI",
-      "x-type": "PostgresURI"
     },
     "Preset": {
       "properties": {
@@ -889,6 +880,7 @@
           "type": "string",
           "x-description": "The name of the preset.",
           "x-is-advanced-field": false,
+          "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Resource Preset"
         }
@@ -900,6 +892,7 @@
       "type": "object",
       "x-description": "Select the resource preset used per service replica.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Resource Preset",
       "x-type": "Preset"
@@ -927,6 +920,7 @@
       "title": "Llm Config",
       "x-description": "LLM provider configuration.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "LLM Configuration"
     },
@@ -942,6 +936,7 @@
       "title": "Embedding Config",
       "x-description": "Embedding provider configuration.",
       "x-is-advanced-field": false,
+      "x-is-configurable": true,
       "x-meta-type": "inline",
       "x-title": "Embedding Configuration"
     },
