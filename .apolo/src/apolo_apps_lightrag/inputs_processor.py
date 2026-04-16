@@ -7,10 +7,12 @@ from apolo_app_types.helm.apps.base import BaseChartValueProcessor
 from apolo_app_types.helm.apps.common import gen_extra_values
 from apolo_app_types.helm.utils.deep_merging import merge_list_of_dicts
 from apolo_app_types.protocols.common.networking import RestAPI
-from apolo_app_types.protocols.common.secrets_ import serialize_optional_secret
+from apolo_app_types.protocols.common.secrets_ import ApoloSecret
 
 from .types import (
     LightRAGAppInputs,
+    LightRAGLLMConfig,
+    LightRAGEmbeddingConfig,
     OpenAIAPICloudProvider,
     OpenAICompatChatAPI,
     OpenAICompatEmbeddingsAPI,
@@ -62,8 +64,17 @@ def _normalise_complete_url(api: RestAPI) -> str:
 
 
 class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
-    def _extract_llm_config(self, llm_config: t.Any) -> dict[str, t.Any]:
+    async def _extract_llm_config(
+        self, llm_config: LightRAGLLMConfig
+    ) -> dict[str, t.Any]:
         """Extract LLM configuration from provider-specific config."""
+
+        if isinstance(llm_config.api_key, ApoloSecret):
+            api_key = (await self.client.secrets.get(llm_config.api_key.key)).decode()
+        elif isinstance(llm_config.api_key, str):
+            api_key = llm_config.api_key
+        else:
+            api_key = "no-auth"
 
         if isinstance(llm_config, OpenAIAPICloudProvider):
             host = _normalise_complete_url(llm_config)
@@ -71,7 +82,7 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
                 "binding": "openai",
                 "model": llm_config.model,
                 "host": host,
-                "api_key": llm_config.api_key,
+                "api_key": api_key,
             }
 
         elif isinstance(llm_config, OpenAICompatChatAPI):
@@ -83,9 +94,6 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
                 raise ValueError(msg)
             model = llm_config.hf_model.model_hf_name
             host = _normalise_complete_url(llm_config)
-            api_key = getattr(llm_config, "api_key", None)
-            if api_key is None or (isinstance(api_key, str) and not api_key.strip()):
-                api_key = "no-auth"
             return {
                 "binding": "openai",
                 "model": model,
@@ -96,15 +104,27 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
         msg = f"Unsupported LLM configuration type: {type(llm_config)!r}"
         raise ValueError(msg)
 
-    def _extract_embedding_config(self, embedding_config: t.Any) -> dict[str, t.Any]:
+    async def _extract_embedding_config(
+        self, embedding_config: LightRAGEmbeddingConfig
+    ) -> dict[str, t.Any]:
         """Extract embedding configuration from provider-specific config."""
+
+        if isinstance(embedding_config.api_key, ApoloSecret):
+            api_key = (
+                await self.client.secrets.get(embedding_config.api_key.key)
+            ).decode()
+        elif isinstance(embedding_config.api_key, str):
+            api_key = embedding_config.api_key
+        else:
+            api_key = "no-auth"
+
         if isinstance(embedding_config, OpenAIEmbeddingCloudProvider):
             host = _normalise_complete_url(embedding_config)
             dimensions = embedding_config.dimensions
             return {
                 "binding": "openai",
                 "model": embedding_config.model,
-                "api_key": embedding_config.api_key,
+                "api_key": api_key,
                 "dimensions": dimensions,
                 "host": host,
             }
@@ -118,9 +138,6 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
             if dimensions is None:
                 msg = "Embedding configuration must specify dimensions"
                 raise ValueError(msg)
-            api_key = getattr(embedding_config, "api_key", None)
-            if api_key is None or (isinstance(api_key, str) and not api_key.strip()):
-                api_key = "no-auth"
             return {
                 "binding": "openai",
                 "model": model,
@@ -135,10 +152,15 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
     async def _get_environment_values(
         self,
         input_: LightRAGAppInputs,
-        app_secrets_name: str,
     ) -> dict[str, t.Any]:
-        llm_config = self._extract_llm_config(input_.llm_config)
-        embedding_config = self._extract_embedding_config(input_.embedding_config)
+        llm_config = await self._extract_llm_config(input_.llm_config)
+        embedding_config = await self._extract_embedding_config(input_.embedding_config)
+
+        pguser = input_.pgvector_user
+        pg_password = (await self.client.secrets.get(pguser.password.key)).decode()
+        pg_host = pguser.pgbouncer_host or pguser.host
+        pg_port = pguser.pgbouncer_port if pguser.pgbouncer_host else pguser.port
+
         env_config = {
             "HOST": "0.0.0.0",
             "PORT": 9621,
@@ -147,32 +169,22 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
             "LLM_BINDING": llm_config["binding"],
             "LLM_MODEL": llm_config["model"],
             "LLM_BINDING_HOST": llm_config["host"],
-            "LLM_BINDING_API_KEY": serialize_optional_secret(
-                llm_config["api_key"], app_secrets_name
-            ),
-            "OPENAI_API_KEY": serialize_optional_secret(
-                llm_config["api_key"], app_secrets_name
-            )
-            or "",
+            "LLM_BINDING_API_KEY": llm_config["api_key"],
+            "OPENAI_API_KEY": llm_config["api_key"],
             "EMBEDDING_BINDING": embedding_config["binding"],
             "EMBEDDING_MODEL": embedding_config["model"],
             "EMBEDDING_DIM": embedding_config["dimensions"],
             "EMBEDDING_BINDING_HOST": embedding_config["host"],
-            "EMBEDDING_BINDING_API_KEY": serialize_optional_secret(
-                embedding_config["api_key"], app_secrets_name
-            )
-            or "",
+            "EMBEDDING_BINDING_API_KEY": embedding_config["api_key"],
             "LIGHTRAG_KV_STORAGE": "PGKVStorage",
             "LIGHTRAG_VECTOR_STORAGE": "PGVectorStorage",
             "LIGHTRAG_DOC_STATUS_STORAGE": "PGDocStatusStorage",
             "LIGHTRAG_GRAPH_STORAGE": "NetworkXStorage",
-            "POSTGRES_HOST": input_.pgvector_user.pgbouncer_host,
-            "POSTGRES_PORT": input_.pgvector_user.pgbouncer_port,
-            "POSTGRES_USER": input_.pgvector_user.user,
-            "POSTGRES_PASSWORD": serialize_optional_secret(
-                input_.pgvector_user.password, secret_name=app_secrets_name
-            ),
-            "POSTGRES_DATABASE": input_.pgvector_user.dbname,
+            "POSTGRES_HOST": pg_host,
+            "POSTGRES_PORT": pg_port,
+            "POSTGRES_USER": pguser.user,
+            "POSTGRES_PASSWORD": pg_password,
+            "POSTGRES_DATABASE": pguser.dbname,
             "POSTGRES_WORKSPACE": "default",
         }
 
@@ -204,7 +216,7 @@ class LightRAGInputsProcessor(BaseChartValueProcessor[LightRAGAppInputs]):
         *_: t.Any,
         **kwargs: t.Any,
     ) -> dict[str, t.Any]:
-        env_values = await self._get_environment_values(input_, app_secrets_name)
+        env_values = await self._get_environment_values(input_)
         persistence_values = await self._get_persistence_values(input_)
         platform_values = await gen_extra_values(
             apolo_client=self.client,

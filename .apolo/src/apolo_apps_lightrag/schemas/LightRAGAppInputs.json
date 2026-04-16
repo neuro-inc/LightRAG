@@ -123,8 +123,15 @@
           "x-title": "Postgres Port"
         },
         "pgbouncer_host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
           "title": "Pgbouncer Host",
-          "type": "string",
           "x-description": "Host of the PGBouncer instance.",
           "x-is-advanced-field": false,
           "x-is-configurable": true,
@@ -132,9 +139,16 @@
           "x-title": "PGBouncer Host"
         },
         "pgbouncer_port": {
-          "exclusiveMinimum": 0,
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
           "title": "Pgbouncer Port",
-          "type": "integer",
           "x-description": "Port of the PGBouncer instance.",
           "x-is-advanced-field": false,
           "x-is-configurable": true,
@@ -495,8 +509,15 @@
           "x-title": "Model"
         },
         "api_key": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApoloSecret"
+            },
+            {
+              "type": "string"
+            }
+          ],
           "title": "Api Key",
-          "type": "string",
           "x-description": "API key used to authenticate with the provider.",
           "x-is-advanced-field": false,
           "x-is-configurable": true,
@@ -614,6 +635,9 @@
         },
         "api_key": {
           "anyOf": [
+            {
+              "$ref": "#/$defs/ApoloSecret"
+            },
             {
               "type": "string"
             },
@@ -745,6 +769,26 @@
           "x-is-configurable": true,
           "x-meta-type": "inline",
           "x-title": "Embedding Dimensions"
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApoloSecret"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Key",
+          "x-description": "API key used to authenticate with the provider.",
+          "x-is-advanced-field": false,
+          "x-is-configurable": true,
+          "x-meta-type": "inline",
+          "x-title": "API Key"
         }
       },
       "title": "OpenAICompatEmbeddingsAPI",
@@ -840,8 +884,15 @@
           "x-title": "Model"
         },
         "api_key": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApoloSecret"
+            },
+            {
+              "type": "string"
+            }
+          ],
           "title": "Api Key",
-          "type": "string",
           "x-description": "OpenAI API key.",
           "x-is-advanced-field": false,
           "x-is-configurable": true,
