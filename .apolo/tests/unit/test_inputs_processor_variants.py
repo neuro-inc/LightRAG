@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from apolo_sdk import Client as ApoloSdkClient
 from apolo_app_types.protocols.common import ApoloSecret, IngressHttp, Preset
 from apolo_app_types.protocols.common.hugging_face import HuggingFaceModel
 from apolo_app_types.protocols.postgres import CrunchyPostgresUserCredentials
@@ -63,6 +64,7 @@ async def _generate_env(
     monkeypatch: pytest.MonkeyPatch,
     llm_config: object,
     embedding_config: object,
+    apolo_client: ApoloSdkClient,
 ) -> dict[str, object]:
     async def fake_gen_extra_values(**_: object) -> dict[str, object]:
         return {"platform": {"ingress": True}}
@@ -72,7 +74,7 @@ async def _generate_env(
         fake_gen_extra_values,
     )
 
-    processor = LightRAGInputsProcessor(client=object())  # type: ignore[arg-type]
+    processor = LightRAGInputsProcessor(client=apolo_client)
     values = await processor.gen_extra_values(
         _make_base_inputs(
             llm_config,
@@ -148,7 +150,6 @@ def test_light_rag_inputs_select_embedding_compat_when_hf_model_present() -> Non
     assert inputs.embedding_config.hf_model.model_hf_name == "hf/embed-model"
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     (
         "llm_config",
@@ -182,11 +183,13 @@ async def test_inputs_processor_llm_variants(
     llm_config: object,
     expected_model: str,
     expected_host: str,
+    apolo_client: ApoloSdkClient,
 ) -> None:
     env = await _generate_env(
         monkeypatch,
         llm_config=llm_config,
         embedding_config=_default_embedding_provider(),
+        apolo_client=apolo_client,
     )
 
     assert env["LLM_BINDING"] == "openai"
@@ -201,9 +204,9 @@ async def test_inputs_processor_llm_variants(
     assert env["OPENAI_API_KEY"] == expected_api_key
 
 
-@pytest.mark.asyncio
 async def test_inputs_processor_openai_compat_provider(
     monkeypatch: pytest.MonkeyPatch,
+    apolo_client,
 ) -> None:
     llm_config = OpenAICompatChatAPI(
         host="compat.example.com",
@@ -217,6 +220,7 @@ async def test_inputs_processor_openai_compat_provider(
         monkeypatch,
         llm_config=llm_config,
         embedding_config=_default_embedding_provider(),
+        apolo_client=apolo_client,
     )
 
     assert env["LLM_BINDING"] == "openai"
@@ -226,9 +230,9 @@ async def test_inputs_processor_openai_compat_provider(
     assert env["OPENAI_API_KEY"] == "compat-key"
 
 
-@pytest.mark.asyncio
 async def test_inputs_processor_cloud_provider_base_path(
     monkeypatch: pytest.MonkeyPatch,
+    apolo_client,
 ) -> None:
     llm_config = OpenAIAPICloudProvider(
         host="openrouter.ai",
@@ -241,6 +245,7 @@ async def test_inputs_processor_cloud_provider_base_path(
         monkeypatch,
         llm_config=llm_config,
         embedding_config=_default_embedding_provider(),
+        apolo_client=apolo_client,
     )
 
     assert env["LLM_BINDING"] == "openai"
@@ -250,7 +255,6 @@ async def test_inputs_processor_cloud_provider_base_path(
     assert env["OPENAI_API_KEY"] == "router-key"
 
 
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("embedding_config", "expected_binding", "expected_host", "expected_dim"),
     [
@@ -285,11 +289,13 @@ async def test_inputs_processor_embedding_variants(
     expected_binding: str,
     expected_host: str,
     expected_dim: int,
+    apolo_client,
 ) -> None:
     env = await _generate_env(
         monkeypatch,
         llm_config=_default_llm_provider(),
         embedding_config=embedding_config,
+        apolo_client=apolo_client,
     )
 
     assert env["EMBEDDING_BINDING"] == expected_binding
@@ -303,9 +309,9 @@ async def test_inputs_processor_embedding_variants(
     assert env["EMBEDDING_BINDING_API_KEY"] == expected_api_key
 
 
-@pytest.mark.asyncio
 async def test_inputs_processor_openai_compat_embedding(
     monkeypatch: pytest.MonkeyPatch,
+    apolo_client: ApoloSdkClient,
 ) -> None:
     embedding_config = OpenAICompatEmbeddingsAPI(
         host="embeddings.example.com",
@@ -313,13 +319,14 @@ async def test_inputs_processor_openai_compat_embedding(
         protocol="https",
         hf_model=HuggingFaceModel(model_hf_name="text-embedding-awesome"),
         dimensions=1536,
+        api_key="embed-key",
     )
-    object.__setattr__(embedding_config, "api_key", "embed-key")
 
     env = await _generate_env(
         monkeypatch,
         llm_config=_default_llm_provider(),
         embedding_config=embedding_config,
+        apolo_client=apolo_client,
     )
 
     assert env["EMBEDDING_BINDING"] == "openai"
@@ -329,9 +336,9 @@ async def test_inputs_processor_openai_compat_embedding(
     assert env["EMBEDDING_DIM"] == 1536
 
 
-@pytest.mark.asyncio
 async def test_inputs_processor_openai_compat_embedding_requires_model(
     monkeypatch: pytest.MonkeyPatch,
+    apolo_client,
 ) -> None:
     embedding_config = OpenAICompatEmbeddingsAPI(
         host="router.example.com",
@@ -348,20 +355,21 @@ async def test_inputs_processor_openai_compat_embedding_requires_model(
             monkeypatch,
             llm_config=_default_llm_provider(),
             embedding_config=embedding_config,
+            apolo_client=apolo_client,
         )
 
 
-def test_extract_llm_config_requires_model_for_compatible() -> None:
+async def test_extract_llm_config_requires_model_for_compatible() -> None:
     processor = LightRAGInputsProcessor(client=object())  # type: ignore[arg-type]
     llm_config = OpenAICompatChatAPI(
         host="router.example.com", protocol="https", port=443
     )
 
     with pytest.raises(ValueError, match="requires a Hugging Face model"):
-        processor._extract_llm_config(llm_config)
+        await processor._extract_llm_config(llm_config)
 
 
-def test_extract_llm_config_compatible_with_model() -> None:
+async def test_extract_llm_config_compatible_with_model() -> None:
     processor = LightRAGInputsProcessor(client=object())  # type: ignore[arg-type]
     llm_config = OpenAIAPICloudProvider(
         host="router.example.com",
@@ -371,14 +379,14 @@ def test_extract_llm_config_compatible_with_model() -> None:
         api_key="router-key",
     )
 
-    config = processor._extract_llm_config(llm_config)
+    config = await processor._extract_llm_config(llm_config)
 
     assert config["model"] == "openrouter/meta-llama"
     assert config["host"] == "https://router.example.com/v1"
     assert config["api_key"] == "router-key"
 
 
-def test_extract_llm_config_chat_requires_hf() -> None:
+async def test_extract_llm_config_chat_requires_hf() -> None:
     processor = LightRAGInputsProcessor(client=object())  # type: ignore[arg-type]
     llm_config = OpenAICompatChatAPI(
         host="hf.example.com",
@@ -387,10 +395,10 @@ def test_extract_llm_config_chat_requires_hf() -> None:
     )
 
     with pytest.raises(ValueError, match="requires a Hugging Face model"):
-        processor._extract_llm_config(llm_config)
+        await processor._extract_llm_config(llm_config)
 
 
-def test_extract_llm_config_chat_with_hf_model() -> None:
+async def test_extract_llm_config_chat_with_hf_model() -> None:
     processor = LightRAGInputsProcessor(client=object())  # type: ignore[arg-type]
     llm_config = OpenAICompatChatAPI(
         host="hf.example.com",
@@ -399,7 +407,7 @@ def test_extract_llm_config_chat_with_hf_model() -> None:
         hf_model=HuggingFaceModel(model_hf_name="hf/awesome-model"),
     )
 
-    config = processor._extract_llm_config(llm_config)
+    config = await processor._extract_llm_config(llm_config)
 
     assert config["model"] == "hf/awesome-model"
     assert config["host"] == "https://hf.example.com:8443/v1"

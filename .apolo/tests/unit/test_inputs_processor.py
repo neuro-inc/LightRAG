@@ -17,10 +17,10 @@ from apolo_apps_lightrag.types import (
 )
 
 
-@pytest.mark.asyncio
-async def test_gen_extra_values_merges_sources(monkeypatch: pytest.MonkeyPatch) -> None:
-    client_stub = object()
-    processor = LightRAGInputsProcessor(client_stub)  # type: ignore[arg-type]
+async def test_gen_extra_values_merges_sources(
+    monkeypatch: pytest.MonkeyPatch, apolo_client
+) -> None:
+    processor = LightRAGInputsProcessor(apolo_client)  # type: ignore[arg-type]
 
     captured: dict[str, Any] = {}
 
@@ -78,7 +78,7 @@ async def test_gen_extra_values_merges_sources(monkeypatch: pytest.MonkeyPatch) 
     assert values["persistence"]["inputs"]["size"] == "15Gi"
     assert values["platform"] == {"ingress": True}
 
-    assert captured["apolo_client"] is client_stub
+    assert captured["apolo_client"] is apolo_client
     assert captured["preset_type"] == app_inputs.preset
     assert captured["ingress_http"] == app_inputs.ingress_http
     assert captured["ingress_grpc"] is None

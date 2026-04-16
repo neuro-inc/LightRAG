@@ -8,6 +8,7 @@ from apolo_app_types.protocols.common import (
     Preset,
     SchemaExtraMetadata,
     SchemaMetaType,
+    ApoloSecret,
 )
 from apolo_app_types.protocols.common.networking import HttpApi, RestAPI, ServiceAPI
 from apolo_app_types.protocols.common.openai_compat import (
@@ -34,7 +35,7 @@ class OpenAICompatChatAPI(OpenAICompatChatAPIBase):
         ).as_json_schema_extra(),
     )
 
-    api_key: str | None = Field(
+    api_key: ApoloSecret | str | None = Field(
         default=None,
         json_schema_extra=SchemaExtraMetadata(
             title="API Key",
@@ -119,7 +120,7 @@ class OpenAIAPICloudProvider(RestAPI):
             description="Model identifier exposed by the provider (for example `gpt-4o`).",
         ).as_json_schema_extra(),
     )
-    api_key: str = Field(
+    api_key: ApoloSecret | str = Field(
         ...,
         json_schema_extra=SchemaExtraMetadata(
             title="API Key",
@@ -172,6 +173,13 @@ class OpenAICompatEmbeddingsAPI(OpenAICompatEmbeddingsAPIBase):
             ),
         ).as_json_schema_extra(),
     )
+    api_key: ApoloSecret | str | None = Field(
+        None,
+        json_schema_extra=SchemaExtraMetadata(
+            title="API Key",
+            description="API key used to authenticate with the provider.",
+        ).as_json_schema_extra(),
+    )
 
 
 class OpenAIEmbeddingCloudProvider(RestAPI):
@@ -216,7 +224,7 @@ class OpenAIEmbeddingCloudProvider(RestAPI):
             description="OpenAI embedding model identifier.",
         ).as_json_schema_extra(),
     )
-    api_key: str = Field(
+    api_key: ApoloSecret | str = Field(
         ...,
         json_schema_extra=SchemaExtraMetadata(
             title="API Key",
