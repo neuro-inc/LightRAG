@@ -177,7 +177,7 @@ autoscaling:
 # Health checks
 healthCheck:
   enabled: true
-  path: "/health"
+  path: "/documents/status_counts"
   initialDelaySeconds: 60
   periodSeconds: 30
   timeoutSeconds: 10
