@@ -3,6 +3,9 @@
 
 replicaCount: 1
 
+strategy:
+  type: Recreate
+
 image:
   repository: ghcr.io/hkuds/lightrag
   tag: v1.4.9.7
