@@ -126,20 +126,18 @@ spec:
 
           {{- if .Values.healthCheck.enabled }}
           livenessProbe:
-            httpGet:
-              path: {{ .Values.healthCheck.path }}
-              port: http
+            exec:
+              command: {{- include "lightrag-minimal.storageProbeCommand" . | nindent 16 }}
             initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
             periodSeconds: {{ .Values.healthCheck.periodSeconds }}
             timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
             failureThreshold: {{ .Values.healthCheck.failureThreshold }}
           readinessProbe:
-            httpGet:
-              path: {{ .Values.healthCheck.path }}
-              port: http
+            exec:
+              command: {{- include "lightrag-minimal.storageProbeCommand" . | nindent 16 }}
             initialDelaySeconds: 30
             periodSeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
             failureThreshold: 3
           {{- end }}
 

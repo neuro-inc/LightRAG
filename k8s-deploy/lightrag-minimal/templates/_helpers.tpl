@@ -89,3 +89,15 @@ Generate AUTH_ACCOUNTS string from configured accounts
 {{- end -}}
 {{- end -}}
 {{- end }}
+
+{{- define "lightrag-minimal.storageProbeCommand" -}}
+- python
+- -c
+- |
+  import os, urllib.request
+  request = urllib.request.Request(
+      "http://127.0.0.1:{{ .Values.service.targetPort }}{{ .Values.healthCheck.path }}",
+      headers={"X-API-Key": os.environ.get("LIGHTRAG_API_KEY", "")},
+  )
+  urllib.request.urlopen(request, timeout={{ sub .Values.healthCheck.timeoutSeconds 1 }})
+{{- end }}
