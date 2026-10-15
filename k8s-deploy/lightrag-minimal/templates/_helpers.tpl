@@ -65,7 +65,7 @@ Create the name of the service account to use
 Create the name of the secret
 */}}
 {{- define "lightrag-minimal.secretName" -}}
-{{- printf "%s-secrets" (include "lightrag-minimal.fullname" .) }}
+{{- .Values.existingSecret | default (printf "%s-secrets" (include "lightrag-minimal.fullname" .)) }}
 {{- end }}
 
 {{/*

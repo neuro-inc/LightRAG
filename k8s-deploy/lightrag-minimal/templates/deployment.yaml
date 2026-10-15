@@ -92,14 +92,14 @@ spec:
                 secretKeyRef:
                   name: {{ include "lightrag-minimal.secretName" . }}
                   key: lightrag-api-key
-            {{- if and .Values.auth.enabled (gt (len .Values.auth.accounts) 0) }}
+            {{- if and .Values.auth.enabled (or .Values.existingSecret (gt (len .Values.auth.accounts) 0)) }}
             - name: AUTH_ACCOUNTS
               valueFrom:
                 secretKeyRef:
                   name: {{ include "lightrag-minimal.secretName" . }}
                   key: auth-accounts
             {{- end }}
-            {{- if and .Values.auth.enabled .Values.auth.tokenSecret }}
+            {{- if and .Values.auth.enabled (or .Values.existingSecret .Values.auth.tokenSecret) }}
             - name: TOKEN_SECRET
               valueFrom:
                 secretKeyRef:

@@ -132,6 +132,8 @@ env:
   CHUNK_OVERLAP_SIZE: 100
   TOP_K: 60
 
+existingSecret: ""
+
 # Secret configuration for API keys
 secrets:
   # Create a secret with your API keys
