@@ -92,6 +92,30 @@ postgresql:
     password: "your-secure-password"
 ```
 
+### Credentials from an existing Secret
+
+Set `existingSecret` to the name of a Secret you manage. The chart then creates no Secret of its own and ignores `secrets.*`, `auth.accounts`, `auth.tokenSecret` and `postgresql.auth.password`. Keys:
+
+| key | used for |
+|-----|----------|
+| `llm-api-key` | `LLM_BINDING_API_KEY` |
+| `embedding-api-key` | `EMBEDDING_BINDING_API_KEY` |
+| `lightrag-api-key` | `LIGHTRAG_API_KEY` |
+| `postgres-password` | `POSTGRES_PASSWORD` |
+| `auth-accounts` | `AUTH_ACCOUNTS` (`user:password,user2:password2`), only with `auth.enabled` |
+| `token-secret` | `TOKEN_SECRET`, only with `auth.enabled` |
+
+With the embedded PostgreSQL, point it at the same Secret:
+
+```yaml
+existingSecret: my-lightrag-credentials
+postgresql:
+  auth:
+    existingSecret: my-lightrag-credentials
+    secretKeys:
+      userPasswordKey: postgres-password
+```
+
 ### Development vs Production
 
 | Setting | Development | Production |
