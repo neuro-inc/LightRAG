@@ -53,6 +53,12 @@ spec:
               value: {{ .Values.env.HOST | quote }}
             - name: PORT
               value: {{ .Values.env.PORT | quote }}
+            {{- if .Values.persistence.enabled }}
+            - name: WORKING_DIR
+              value: /app/rag_storage
+            - name: INPUT_DIR
+              value: /app/inputs
+            {{- end }}
 
             # Web UI configuration
             - name: WEBUI_TITLE
