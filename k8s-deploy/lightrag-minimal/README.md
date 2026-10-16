@@ -116,6 +116,16 @@ postgresql:
       userPasswordKey: postgres-password
 ```
 
+### Extra environment variables
+
+`env` sets only the variables the deployment template names. Anything else LightRAG reads goes to `extraEnv`, a list of container env entries rendered as is:
+
+```yaml
+extraEnv:
+  - name: POSTGRES_VECTOR_INDEX_TYPE
+    value: HNSW_HALFVEC
+```
+
 ### Development vs Production
 
 | Setting | Development | Production |
