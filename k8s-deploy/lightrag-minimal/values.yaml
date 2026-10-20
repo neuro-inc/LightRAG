@@ -134,6 +134,13 @@ env:
 
 extraEnv: []
 
+sentry:
+  enabled: false
+  dsn: ""
+  clusterName: ""
+  appName: lightrag
+  sampleRate: "0.01"
+
 existingSecret: ""
 
 # Secret configuration for API keys
