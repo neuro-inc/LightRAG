@@ -139,6 +139,22 @@ spec:
               value: {{ .Values.env.POSTGRES_DATABASE | quote }}
             - name: POSTGRES_WORKSPACE
               value: {{ .Values.env.POSTGRES_WORKSPACE | quote }}
+            {{- if .Values.sentry.enabled }}
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "lightrag-minimal.secretName" . }}
+                  key: sentry-dsn
+                  optional: true
+            - name: SENTRY_CLUSTER_NAME
+              value: {{ .Values.sentry.clusterName | quote }}
+            - name: SENTRY_APP_NAME
+              value: {{ .Values.sentry.appName | quote }}
+            - name: SENTRY_SAMPLE_RATE
+              value: {{ .Values.sentry.sampleRate | quote }}
+            - name: SENTRY_IGNORED_PATHS
+              value: {{ printf "/health,%s" .Values.healthCheck.path | quote }}
+            {{- end }}
             {{- with .Values.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

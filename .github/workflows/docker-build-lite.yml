@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   build-and-push-lite:
+    if: github.repository == 'HKUDS/LightRAG'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

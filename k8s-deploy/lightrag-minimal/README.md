@@ -104,6 +104,7 @@ Set `existingSecret` to the name of a Secret you manage. The chart then creates 
 | `postgres-password` | `POSTGRES_PASSWORD` |
 | `auth-accounts` | `AUTH_ACCOUNTS` (`user:password,user2:password2`), only with `auth.enabled` |
 | `token-secret` | `TOKEN_SECRET`, only with `auth.enabled` |
+| `sentry-dsn` | `SENTRY_DSN`, only with `sentry.enabled` |
 
 With the embedded PostgreSQL, point it at the same Secret:
 
@@ -125,6 +126,29 @@ extraEnv:
   - name: POSTGRES_VECTOR_INDEX_TYPE
     value: HNSW_HALFVEC
 ```
+
+### Sentry
+
+The upstream image does not report to Sentry. `ghcr.io/neuro-inc/lightrag-server` (built from `server/`) is the upstream image plus `sentry-sdk` and a launcher that initialises Sentry before starting the server when `SENTRY_DSN` is set. If that fails, the launcher logs a warning and starts the server without Sentry.
+
+- Every `ERROR` log record becomes an event, including the errors LightRAG catches and only logs. The exception being handled is attached when the record is logged inside the `except` block that caught it, or when the message names it; otherwise the event carries the stack of the logging call.
+- Events about one exception share a fingerprint (root exception type and innermost LightRAG frame), so one failure is one issue even when several handlers log it.
+- Dropped: a `traceback.format_exc()` dump of an exception that was already reported, the same message twice for one exception, and the per-attempt errors of LLM calls that are retried (429, timeouts, 5xx). A call that still fails after its retries is reported by the code that called it.
+- Unhandled exceptions and 5xx responses are reported, except the generic 500 that LightRAG returns after it has already logged the cause.
+- LightRAG's own log lines are not kept as breadcrumbs: many of its warnings carry the query, keywords, LLM output or document text. The LLM response in the keyword JSON parsing error is replaced with `[Filtered]`. Request bodies, local variables and default PII are not sent.
+- Probe paths (`/health` and `healthCheck.path`) never become transactions.
+
+```yaml
+image:
+  repository: ghcr.io/neuro-inc/lightrag-server
+existingSecret: my-lightrag-credentials
+sentry:
+  enabled: true
+  clusterName: prod
+  sampleRate: "0.01"
+```
+
+The DSN is read from the optional `sentry-dsn` key of the chart Secret, or of `existingSecret`; without it the pod starts without Sentry. `clusterName` is the Sentry environment (`unknown` when empty). `sampleRate` is the traces sample rate; errors are always sent.
 
 ### Development vs Production
 

@@ -21,6 +21,8 @@ GITHUB_USERNAME := $(shell echo "$$APOLO_GITHUB_TOKEN" | base64 -d 2>/dev/null |
 POETRY ?= poetry
 IMAGE_NAME ?= app-lightrag
 HOOKS_IMAGE_TARGET ?= ghcr.io/neuro-inc/lightrag
+SERVER_IMAGE_NAME ?= lightrag-server
+SERVER_IMAGE_TARGET ?= ghcr.io/neuro-inc/lightrag-server
 # Determine the desired image tag: prefer git/CI tag names (keeping a leading "v"),
 # otherwise fall back to a sanitized branch name or short commit hash.
 DEFAULT_REF_TAG := $(shell bash -lc '\
@@ -65,6 +67,8 @@ Available targets:
   helm-push-app        - Package and push the full app chart
   build-hook-image     - Build the hooks helper image
   push-hook-image      - Push the hooks helper image
+  build-server-image   - Build the LightRAG server image with Sentry
+  push-server-image    - Push the LightRAG server image
   clean                - Remove packaged charts from $(CHART_PACKAGE_DIR)
 
 Set VERSION=1.2.3 to override the git-derived chart version.
@@ -76,7 +80,7 @@ export HELP_TEXT
 # ------------------------------------------------------------------------------
 .PHONY: all help test clean
 .PHONY: install setup lint format test-unit gen-types-schemas
-.PHONY: build-hook-image push-hook-image helm-package helm-push helm-package-app helm-push-app
+.PHONY: build-hook-image push-hook-image build-server-image push-server-image helm-package helm-push helm-package-app helm-push-app
 
 # ------------------------------------------------------------------------------
 # User-facing helpers
@@ -119,6 +123,16 @@ push-hook-image: build-hook-image
 		docker tag $(IMAGE_NAME):latest $(HOOKS_IMAGE_TARGET):latest; \
 		docker push $(HOOKS_IMAGE_TARGET):latest; \
 	fi
+
+build-server-image:
+	docker build \
+		-t $(SERVER_IMAGE_NAME):latest \
+		-f server/Dockerfile \
+		server
+
+push-server-image: build-server-image
+	docker tag $(SERVER_IMAGE_NAME):latest $(SERVER_IMAGE_TARGET):$(IMAGE_TAG)
+	docker push $(SERVER_IMAGE_TARGET):$(IMAGE_TAG)
 
 # ------------------------------------------------------------------------------
 # Upstream Helm packaging targets (kept minimal to ease syncing with source)
