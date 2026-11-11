@@ -9,7 +9,7 @@ COPY patches /tmp/patches
 RUN apt-get update \
     && apt-get install -y --no-install-recommends patch \
     && for target in /app "$(/app/.venv/bin/python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"; do \
-        for p in /tmp/patches/*.patch; do patch -p1 --forward --no-backup-if-mismatch -d "$target" < "$p" || exit 1; done; \
+        for p in /tmp/patches/*.patch; do patch -p1 --forward --fuzz=0 --no-backup-if-mismatch -d "$target" < "$p" || exit 1; done; \
     done \
     && apt-get purge -y --auto-remove patch \
     && rm -rf /var/lib/apt/lists/* /tmp/patches

@@ -109,7 +109,7 @@ index 9fb7c6e1e..45e0f7350 100644
              logger.error(f"Error getting health status: {str(e)}")
              raise internal_server_error(e)
 diff --git a/lightrag/kg/postgres_impl.py b/lightrag/kg/postgres_impl.py
-index 2d5cde4c1..feeedc456 100644
+index 2d5cde4c1..1d90206a6 100644
 --- a/lightrag/kg/postgres_impl.py
 +++ b/lightrag/kg/postgres_impl.py
 @@ -556,7 +556,7 @@ class PostgreSQLDB:
@@ -117,7 +117,7 @@ index 2d5cde4c1..feeedc456 100644
          return None
 
 -    async def initdb(self):
-+    async def initdb(self, attempts: int | None = None):
++    async def initdb(self, attempts: int | None = None, quiet: bool = False):
          # Prepare connection parameters
          connection_params = {
              "user": self.user,
@@ -134,25 +134,44 @@ index 2d5cde4c1..feeedc456 100644
                  reraise=True,
              ):
                  with attempt:
-@@ -747,7 +747,16 @@ class PostgreSQLDB:
+@@ -737,20 +737,32 @@ class PostgreSQLDB:
+                 f"PostgreSQL, Connected to database at {self.host}:{self.port}/{self.database} {ssl_status}"
+             )
+         except Exception as e:
+-            logger.error(
++            log_failure = logger.warning if quiet else logger.error
++            log_failure(
+                 f"PostgreSQL, Failed to connect database at {self.host}:{self.port}/{self.database}, Got:{e}"
+             )
+             raise
+
+-    async def _ensure_pool(self) -> None:
++    async def _ensure_pool(self, quiet: bool = False) -> None:
+         """Ensure the connection pool is initialised."""
          if self.pool is None:
              async with self._pool_reconnect_lock:
                  if self.pool is None:
 -                    await self.initdb()
-+                    await self.initdb(attempts=1)
++                    await self.initdb(attempts=1, quiet=quiet)
 +
 +    async def check_connection(self, timeout: float) -> None:
 +        async def _select_one() -> None:
-+            await self._ensure_pool()
++            await self._ensure_pool(quiet=True)
 +            assert self.pool is not None
-+            async with self.pool.acquire(timeout=timeout) as connection:
++            async with self.pool.acquire(timeout=timeout / 2) as connection:
 +                await connection.fetchval("SELECT 1")
 +
-+        await asyncio.wait_for(_select_one(), timeout=timeout)
++        await asyncio.wait_for(_select_one(), timeout=timeout / 2)
 
-     async def _reset_pool(self) -> None:
+-    async def _reset_pool(self) -> None:
++    async def _reset_pool(self, failed_pool: Pool | None = None) -> None:
          async with self._pool_reconnect_lock:
-@@ -767,8 +776,7 @@ class PostgreSQLDB:
++            if failed_pool is not None and self.pool is not failed_pool:
++                return
+             if self.pool is not None:
+                 try:
+                     await asyncio.wait_for(
+@@ -767,8 +779,7 @@ class PostgreSQLDB:
                      )
              self.pool = None
 
@@ -162,14 +181,48 @@ index 2d5cde4c1..feeedc456 100644
          exc = retry_state.outcome.exception() if retry_state.outcome else None
          logger.warning(
              "PostgreSQL transient connection issue on attempt %s/%s: %r",
-@@ -776,6 +784,10 @@ class PostgreSQLDB:
+@@ -776,7 +787,6 @@ class PostgreSQLDB:
              self.connection_retry_attempts,
              exc,
          )
-+
-+    async def _before_sleep(self, retry_state: RetryCallState) -> None:
-+        """Hook invoked by tenacity before sleeping between retries."""
-+        await self._log_transient_failure(retry_state)
-         await self._reset_pool()
+-        await self._reset_pool()
 
      async def _run_with_retry(
+         self,
+@@ -809,17 +819,25 @@ class PostgreSQLDB:
+             if self.connection_retry_backoff > 0
+             else wait_fixed(0)
+         )
++        pool: Pool | None = None
++
++        async def _before_sleep(retry_state: RetryCallState) -> None:
++            await self._log_transient_failure(retry_state)
++            if pool is not None:
++                await self._reset_pool(pool)
+
+         async for attempt in AsyncRetrying(
+             stop=stop_after_attempt(self.connection_retry_attempts),
+             retry=retry_if_exception_type(self._transient_exceptions),
+             wait=wait_strategy,
+-            before_sleep=self._before_sleep,
++            before_sleep=_before_sleep,
+             reraise=True,
+         ):
+             with attempt:
++                pool = None
+                 await self._ensure_pool()
+-                assert self.pool is not None
++                pool = self.pool
++                assert pool is not None
+                 if timing_label:
+                     pool_snapshot_before = self._get_pool_snapshot()
+                     performance_timing_log(
+@@ -828,7 +846,7 @@ class PostgreSQLDB:
+                         pool_snapshot_before,
+                     )
+                 acquire_start = time.perf_counter()
+-                async with self.pool.acquire() as connection:  # type: ignore[arg-type]
++                async with pool.acquire() as connection:
+                     acquire_elapsed = time.perf_counter() - acquire_start
+                     if timing_label:
+                         pool_snapshot_after = self._get_pool_snapshot()
