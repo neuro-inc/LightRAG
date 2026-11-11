@@ -1,115 +1,5 @@
-diff --git a/lightrag/api/lightrag_server.py b/lightrag/api/lightrag_server.py
-index 9fb7c6e1e..45e0f7350 100644
---- a/lightrag/api/lightrag_server.py
-+++ b/lightrag/api/lightrag_server.py
-@@ -498,6 +498,47 @@ def _get_storage_workspaces(rag: Any) -> dict[str, str | None]:
-     }
-
-
-+def _get_postgres_databases(rag: Any) -> list[Any]:
-+    postgres_impl = sys.modules.get("lightrag.kg.postgres_impl")
-+    if postgres_impl is None:
-+        return []
-+    databases: list[Any] = []
-+    for name in (
-+        "full_docs",
-+        "text_chunks",
-+        "full_entities",
-+        "full_relations",
-+        "entity_chunks",
-+        "relation_chunks",
-+        "entities_vdb",
-+        "relationships_vdb",
-+        "chunks_vdb",
-+        "chunk_entity_relation_graph",
-+        "llm_response_cache",
-+        "doc_status",
-+    ):
-+        db = getattr(getattr(rag, name, None), "db", None)
-+        if isinstance(db, postgres_impl.PostgreSQLDB) and db not in databases:
-+            databases.append(db)
-+    return databases
-+
-+
-+async def _postgres_reachable(rag: Any, timeout: float) -> bool:
-+    try:
-+        for db in _get_postgres_databases(rag):
-+            await db.check_connection(timeout)
-+    except Exception as e:
-+        logger.warning(f"PostgreSQL unreachable for /health: {e!r}")
-+        return False
-+    return True
-+
-+
-+def _health_response(status_data: dict[str, Any]) -> Any:
-+    if status_data["status"] == "healthy":
-+        return status_data
-+    return JSONResponse(status_code=503, content=jsonable_encoder(status_data))
-+
-+
- def _build_mineru_status() -> dict[str, Any]:
-     """Snapshot MinerU-related env vars for the /health endpoint.
-
-@@ -2786,12 +2827,16 @@ def create_app(args):
-             "ai_content_notice_enabled": ai_content_notice_enabled,
-         }
-
-+    health_check_timeout = get_env_value("HEALTH_CHECK_TIMEOUT", 3.0, float)
-+
-     @app.get(
-         "/health",
-         dependencies=[Depends(combined_auth)],
-         summary="Get system health and configuration status",
-         description=(
--            "Always reachable as a liveness probe (HTTP 200). Unauthenticated "
-+            "Reachable without credentials as a health probe: HTTP 200, or HTTP "
-+            "503 when a PostgreSQL storage backend does not answer within "
-+            "HEALTH_CHECK_TIMEOUT seconds. Unauthenticated "
-             "callers receive only liveness signals (status, versions, auth_mode, "
-             "pipeline_busy). The full configuration and operational metrics are "
-             "returned only to authenticated callers (valid JWT or X-API-Key)."
-@@ -2845,7 +2890,8 @@ def create_app(args):
-                         }
-                     }
-                 },
--            }
-+            },
-+            503: {"description": "A PostgreSQL storage backend is unreachable"},
-         },
-     )
-     async def get_status(request: Request, authenticated: bool = Depends(auth_status)):
-@@ -2902,8 +2948,10 @@ def create_app(args):
-             # Every field here is either a pure liveness signal or is already
-             # exposed by the unauthenticated /auth-status endpoint, so it leaks
-             # nothing new.
-+            postgres_reachable = await _postgres_reachable(rag, health_check_timeout)
-+
-             status_data = {
--                "status": "healthy",
-+                "status": "healthy" if postgres_reachable else "unhealthy",
-                 "auth_mode": auth_mode,
-                 "core_version": core_version,
-                 "api_version": api_version_display,
-@@ -2930,7 +2978,7 @@ def create_app(args):
-             # authenticated callers — see Issue #3294. The skipped queue-status
-             # and keyed-lock-cleanup calls also keep unauthenticated probes cheap.
-             if not authenticated:
--                return status_data
-+                return _health_response(status_data)
-
-             # Cleanup expired keyed locks and get status
-             keyed_lock_info = cleanup_keyed_lock()
-@@ -3018,7 +3066,7 @@ def create_app(args):
-                     "rerank_queue_status": await rag.get_rerank_queue_status(),
-                 }
-             )
--            return status_data
-+            return _health_response(status_data)
-         except Exception as e:
-             logger.error(f"Error getting health status: {str(e)}")
-             raise internal_server_error(e)
 diff --git a/lightrag/kg/postgres_impl.py b/lightrag/kg/postgres_impl.py
-index 2d5cde4c1..1d90206a6 100644
+index 2d5cde4c1..1336cf9ad 100644
 --- a/lightrag/kg/postgres_impl.py
 +++ b/lightrag/kg/postgres_impl.py
 @@ -556,7 +556,7 @@ class PostgreSQLDB:
@@ -117,7 +7,7 @@ index 2d5cde4c1..1d90206a6 100644
          return None
 
 -    async def initdb(self):
-+    async def initdb(self, attempts: int | None = None, quiet: bool = False):
++    async def initdb(self, attempts: int | None = None):
          # Prepare connection parameters
          connection_params = {
              "user": self.user,
@@ -134,34 +24,12 @@ index 2d5cde4c1..1d90206a6 100644
                  reraise=True,
              ):
                  with attempt:
-@@ -737,20 +737,32 @@ class PostgreSQLDB:
-                 f"PostgreSQL, Connected to database at {self.host}:{self.port}/{self.database} {ssl_status}"
-             )
-         except Exception as e:
--            logger.error(
-+            log_failure = logger.warning if quiet else logger.error
-+            log_failure(
-                 f"PostgreSQL, Failed to connect database at {self.host}:{self.port}/{self.database}, Got:{e}"
-             )
-             raise
-
--    async def _ensure_pool(self) -> None:
-+    async def _ensure_pool(self, quiet: bool = False) -> None:
-         """Ensure the connection pool is initialised."""
+@@ -747,10 +747,12 @@ class PostgreSQLDB:
          if self.pool is None:
              async with self._pool_reconnect_lock:
                  if self.pool is None:
 -                    await self.initdb()
-+                    await self.initdb(attempts=1, quiet=quiet)
-+
-+    async def check_connection(self, timeout: float) -> None:
-+        async def _select_one() -> None:
-+            await self._ensure_pool(quiet=True)
-+            assert self.pool is not None
-+            async with self.pool.acquire(timeout=timeout / 2) as connection:
-+                await connection.fetchval("SELECT 1")
-+
-+        await asyncio.wait_for(_select_one(), timeout=timeout / 2)
++                    await self.initdb(attempts=1)
 
 -    async def _reset_pool(self) -> None:
 +    async def _reset_pool(self, failed_pool: Pool | None = None) -> None:
@@ -171,7 +39,7 @@ index 2d5cde4c1..1d90206a6 100644
              if self.pool is not None:
                  try:
                      await asyncio.wait_for(
-@@ -767,8 +779,7 @@ class PostgreSQLDB:
+@@ -767,8 +769,7 @@ class PostgreSQLDB:
                      )
              self.pool = None
 
@@ -181,7 +49,7 @@ index 2d5cde4c1..1d90206a6 100644
          exc = retry_state.outcome.exception() if retry_state.outcome else None
          logger.warning(
              "PostgreSQL transient connection issue on attempt %s/%s: %r",
-@@ -776,7 +787,6 @@ class PostgreSQLDB:
+@@ -776,7 +777,6 @@ class PostgreSQLDB:
              self.connection_retry_attempts,
              exc,
          )
@@ -189,7 +57,7 @@ index 2d5cde4c1..1d90206a6 100644
 
      async def _run_with_retry(
          self,
-@@ -809,17 +819,25 @@ class PostgreSQLDB:
+@@ -809,17 +809,25 @@ class PostgreSQLDB:
              if self.connection_retry_backoff > 0
              else wait_fixed(0)
          )
@@ -217,7 +85,7 @@ index 2d5cde4c1..1d90206a6 100644
                  if timing_label:
                      pool_snapshot_before = self._get_pool_snapshot()
                      performance_timing_log(
-@@ -828,7 +846,7 @@ class PostgreSQLDB:
+@@ -828,7 +836,7 @@ class PostgreSQLDB:
                          pool_snapshot_before,
                      )
                  acquire_start = time.perf_counter()
