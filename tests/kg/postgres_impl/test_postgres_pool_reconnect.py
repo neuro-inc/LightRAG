@@ -144,3 +144,123 @@ async def test_check_connection_times_out_on_a_hanging_database():
     ):
         with pytest.raises(asyncio.TimeoutError):
             await db.check_connection(timeout=0.1)
+
+
+@pytest.mark.asyncio
+async def test_failed_reconnect_does_not_close_a_newer_pool():
+    db = make_db()
+    connection = MagicMock()
+    connection.fetch = AsyncMock(return_value=[])
+    healthy = make_pool(connection)
+    first_attempt_started = asyncio.Event()
+    fail_first_attempt = asyncio.Event()
+    calls = 0
+
+    async def create_pool(**_kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            first_attempt_started.set()
+            await fail_first_attempt.wait()
+            raise refused()
+        return healthy
+
+    with patch("lightrag.kg.postgres_impl.asyncpg.create_pool", create_pool):
+        first = asyncio.create_task(db.query("SELECT 1"))
+        await first_attempt_started.wait()
+        second = asyncio.create_task(db.query("SELECT 2"))
+        await asyncio.sleep(0)
+        fail_first_attempt.set()
+        await asyncio.wait_for(asyncio.gather(first, second), timeout=5)
+
+    healthy.close.assert_not_awaited()
+    assert db.pool is healthy
+    assert calls == 2
+
+
+@pytest.mark.asyncio
+async def test_check_connection_bounds_the_release_of_a_hung_connection():
+    db = make_db()
+    connection = MagicMock()
+
+    async def hang(_sql):
+        await asyncio.sleep(60)
+
+    connection.fetchval = AsyncMock(side_effect=hang)
+
+    @asynccontextmanager
+    async def acquire(timeout=None):
+        try:
+            yield connection
+        finally:
+            await asyncio.sleep(timeout)
+
+    pool = MagicMock()
+    pool.acquire = acquire
+    loop = asyncio.get_running_loop()
+
+    with patch(
+        "lightrag.kg.postgres_impl.asyncpg.create_pool", AsyncMock(return_value=pool)
+    ):
+        started = loop.time()
+        with pytest.raises(asyncio.TimeoutError):
+            await db.check_connection(timeout=0.4)
+        elapsed = loop.time() - started
+
+    assert 0.35 < elapsed < 0.55
+
+
+@pytest.mark.asyncio
+async def test_check_connection_logs_a_failed_connect_below_error():
+    db = make_db()
+
+    with (
+        patch(
+            "lightrag.kg.postgres_impl.asyncpg.create_pool",
+            AsyncMock(side_effect=refused()),
+        ),
+        patch("lightrag.kg.postgres_impl.logger") as logger,
+    ):
+        with pytest.raises(ConnectionRefusedError):
+            await db.check_connection(timeout=5)
+
+    logger.error.assert_not_called()
+    assert "Failed to connect database" in logger.warning.call_args.args[0]
+
+
+@pytest.mark.asyncio
+async def test_query_logs_a_failed_connect_as_error():
+    db = make_db(attempts=1)
+
+    with (
+        patch(
+            "lightrag.kg.postgres_impl.asyncpg.create_pool",
+            AsyncMock(side_effect=refused()),
+        ),
+        patch("lightrag.kg.postgres_impl.logger") as logger,
+    ):
+        with pytest.raises(ConnectionRefusedError):
+            await db.query("SELECT 1")
+
+    assert any(
+        "Failed to connect database" in call.args[0]
+        for call in logger.error.call_args_list
+    )
+
+
+@pytest.mark.asyncio
+async def test_reset_pool_closes_only_the_pool_that_failed():
+    db = make_db()
+    failed = make_pool(MagicMock())
+    newer = make_pool(MagicMock())
+    db.pool = newer
+
+    await db._reset_pool(failed)
+
+    newer.close.assert_not_awaited()
+    assert db.pool is newer
+
+    await db._reset_pool(newer)
+
+    newer.close.assert_awaited_once()
+    assert db.pool is None
