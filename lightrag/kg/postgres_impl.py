@@ -556,7 +556,7 @@ class PostgreSQLDB:
         logger.warning(f"PostgreSQL, Unknown SSL mode: {ssl_mode}, SSL disabled")
         return None
 
-    async def initdb(self):
+    async def initdb(self, attempts: int | None = None):
         # Prepare connection parameters
         connection_params = {
             "user": self.user,
@@ -723,10 +723,10 @@ class PostgreSQLDB:
 
         try:
             async for attempt in AsyncRetrying(
-                stop=stop_after_attempt(self.connection_retry_attempts),
+                stop=stop_after_attempt(attempts or self.connection_retry_attempts),
                 retry=retry_if_exception_type(self._transient_exceptions),
                 wait=wait_strategy,
-                before_sleep=self._before_sleep,
+                before_sleep=self._log_transient_failure,
                 reraise=True,
             ):
                 with attempt:
@@ -747,7 +747,16 @@ class PostgreSQLDB:
         if self.pool is None:
             async with self._pool_reconnect_lock:
                 if self.pool is None:
-                    await self.initdb()
+                    await self.initdb(attempts=1)
+
+    async def check_connection(self, timeout: float) -> None:
+        async def _select_one() -> None:
+            await self._ensure_pool()
+            assert self.pool is not None
+            async with self.pool.acquire(timeout=timeout) as connection:
+                await connection.fetchval("SELECT 1")
+
+        await asyncio.wait_for(_select_one(), timeout=timeout)
 
     async def _reset_pool(self) -> None:
         async with self._pool_reconnect_lock:
@@ -767,8 +776,7 @@ class PostgreSQLDB:
                     )
             self.pool = None
 
-    async def _before_sleep(self, retry_state: RetryCallState) -> None:
-        """Hook invoked by tenacity before sleeping between retries."""
+    async def _log_transient_failure(self, retry_state: RetryCallState) -> None:
         exc = retry_state.outcome.exception() if retry_state.outcome else None
         logger.warning(
             "PostgreSQL transient connection issue on attempt %s/%s: %r",
@@ -776,6 +784,10 @@ class PostgreSQLDB:
             self.connection_retry_attempts,
             exc,
         )
+
+    async def _before_sleep(self, retry_state: RetryCallState) -> None:
+        """Hook invoked by tenacity before sleeping between retries."""
+        await self._log_transient_failure(retry_state)
         await self._reset_pool()
 
     async def _run_with_retry(
