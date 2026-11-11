@@ -498,47 +498,6 @@ def _get_storage_workspaces(rag: Any) -> dict[str, str | None]:
     }
 
 
-def _get_postgres_databases(rag: Any) -> list[Any]:
-    postgres_impl = sys.modules.get("lightrag.kg.postgres_impl")
-    if postgres_impl is None:
-        return []
-    databases: list[Any] = []
-    for name in (
-        "full_docs",
-        "text_chunks",
-        "full_entities",
-        "full_relations",
-        "entity_chunks",
-        "relation_chunks",
-        "entities_vdb",
-        "relationships_vdb",
-        "chunks_vdb",
-        "chunk_entity_relation_graph",
-        "llm_response_cache",
-        "doc_status",
-    ):
-        db = getattr(getattr(rag, name, None), "db", None)
-        if isinstance(db, postgres_impl.PostgreSQLDB) and db not in databases:
-            databases.append(db)
-    return databases
-
-
-async def _postgres_reachable(rag: Any, timeout: float) -> bool:
-    try:
-        for db in _get_postgres_databases(rag):
-            await db.check_connection(timeout)
-    except Exception as e:
-        logger.warning(f"PostgreSQL unreachable for /health: {e!r}")
-        return False
-    return True
-
-
-def _health_response(status_data: dict[str, Any]) -> Any:
-    if status_data["status"] == "healthy":
-        return status_data
-    return JSONResponse(status_code=503, content=jsonable_encoder(status_data))
-
-
 def _build_mineru_status() -> dict[str, Any]:
     """Snapshot MinerU-related env vars for the /health endpoint.
 
@@ -2827,16 +2786,12 @@ def create_app(args):
             "ai_content_notice_enabled": ai_content_notice_enabled,
         }
 
-    health_check_timeout = get_env_value("HEALTH_CHECK_TIMEOUT", 3.0, float)
-
     @app.get(
         "/health",
         dependencies=[Depends(combined_auth)],
         summary="Get system health and configuration status",
         description=(
-            "Reachable without credentials as a health probe: HTTP 200, or HTTP "
-            "503 when a PostgreSQL storage backend does not answer within "
-            "HEALTH_CHECK_TIMEOUT seconds. Unauthenticated "
+            "Always reachable as a liveness probe (HTTP 200). Unauthenticated "
             "callers receive only liveness signals (status, versions, auth_mode, "
             "pipeline_busy). The full configuration and operational metrics are "
             "returned only to authenticated callers (valid JWT or X-API-Key)."
@@ -2890,8 +2845,7 @@ def create_app(args):
                         }
                     }
                 },
-            },
-            503: {"description": "A PostgreSQL storage backend is unreachable"},
+            }
         },
     )
     async def get_status(request: Request, authenticated: bool = Depends(auth_status)):
@@ -2948,10 +2902,8 @@ def create_app(args):
             # Every field here is either a pure liveness signal or is already
             # exposed by the unauthenticated /auth-status endpoint, so it leaks
             # nothing new.
-            postgres_reachable = await _postgres_reachable(rag, health_check_timeout)
-
             status_data = {
-                "status": "healthy" if postgres_reachable else "unhealthy",
+                "status": "healthy",
                 "auth_mode": auth_mode,
                 "core_version": core_version,
                 "api_version": api_version_display,
@@ -2978,7 +2930,7 @@ def create_app(args):
             # authenticated callers — see Issue #3294. The skipped queue-status
             # and keyed-lock-cleanup calls also keep unauthenticated probes cheap.
             if not authenticated:
-                return _health_response(status_data)
+                return status_data
 
             # Cleanup expired keyed locks and get status
             keyed_lock_info = cleanup_keyed_lock()
@@ -3066,7 +3018,7 @@ def create_app(args):
                     "rerank_queue_status": await rag.get_rerank_queue_status(),
                 }
             )
-            return _health_response(status_data)
+            return status_data
         except Exception as e:
             logger.error(f"Error getting health status: {str(e)}")
             raise internal_server_error(e)

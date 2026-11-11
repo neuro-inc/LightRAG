@@ -12,13 +12,12 @@ that behavior across the three authentication modes:
   API key) unlocks the configuration; anonymous probes get liveness only.
 - API-key-only: only a valid X-API-Key unlocks the configuration.
 
-In every case ``/health`` returns HTTP 200 while its PostgreSQL storage
-answers, so external probes keep working.
+In every case ``/health`` returns HTTP 200 so external liveness probes keep
+working.
 """
 
 import sys
-from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock
 
 import pytest
 from fastapi import APIRouter
@@ -305,63 +304,3 @@ def test_combined_mode_valid_api_key_unlocks_config(monkeypatch):
 
     assert resp.status_code == 200
     _assert_full_config(resp.json())
-
-
-def _set_postgres(monkeypatch, check_connection):
-    import lightrag.api.lightrag_server as lightrag_server
-
-    db = MagicMock()
-    db.check_connection = check_connection
-    monkeypatch.setattr(lightrag_server, "_get_postgres_databases", lambda _rag: [db])
-
-
-def test_unreachable_postgres_returns_503_to_anonymous(monkeypatch):
-    client = _build_client(monkeypatch)
-    _set_auth_mode(monkeypatch, auth_configured=True)
-    _set_postgres(monkeypatch, AsyncMock(side_effect=ConnectionRefusedError()))
-
-    resp = client.get("/health")
-
-    assert resp.status_code == 503
-    assert resp.json()["status"] == "unhealthy"
-    _assert_liveness_only(resp.json())
-
-
-def test_unreachable_postgres_returns_503_with_config(monkeypatch):
-    client = _build_client(monkeypatch)
-    _set_auth_mode(monkeypatch, auth_configured=False)
-    _set_postgres(monkeypatch, AsyncMock(side_effect=TimeoutError()))
-
-    resp = client.get("/health")
-
-    assert resp.status_code == 503
-    assert resp.json()["status"] == "unhealthy"
-    _assert_full_config(resp.json())
-
-
-def test_reachable_postgres_returns_200(monkeypatch):
-    check_connection = AsyncMock()
-    client = _build_client(monkeypatch)
-    _set_auth_mode(monkeypatch, auth_configured=False)
-    _set_postgres(monkeypatch, check_connection)
-
-    resp = client.get("/health")
-
-    assert resp.status_code == 200
-    assert resp.json()["status"] == "healthy"
-    check_connection.assert_awaited_once_with(3.0)
-
-
-def test_postgres_databases_are_found_once_per_shared_client():
-    from lightrag.api.lightrag_server import _get_postgres_databases
-    from lightrag.kg.postgres_impl import PostgreSQLDB
-
-    db = PostgreSQLDB.__new__(PostgreSQLDB)
-    rag = SimpleNamespace(
-        full_docs=SimpleNamespace(db=db),
-        doc_status=SimpleNamespace(db=db),
-        chunk_entity_relation_graph=SimpleNamespace(db=MagicMock()),
-        entities_vdb=SimpleNamespace(),
-    )
-
-    assert _get_postgres_databases(rag) == [db]

@@ -556,7 +556,7 @@ class PostgreSQLDB:
         logger.warning(f"PostgreSQL, Unknown SSL mode: {ssl_mode}, SSL disabled")
         return None
 
-    async def initdb(self, attempts: int | None = None, quiet: bool = False):
+    async def initdb(self, attempts: int | None = None):
         # Prepare connection parameters
         connection_params = {
             "user": self.user,
@@ -737,27 +737,17 @@ class PostgreSQLDB:
                 f"PostgreSQL, Connected to database at {self.host}:{self.port}/{self.database} {ssl_status}"
             )
         except Exception as e:
-            log_failure = logger.warning if quiet else logger.error
-            log_failure(
+            logger.error(
                 f"PostgreSQL, Failed to connect database at {self.host}:{self.port}/{self.database}, Got:{e}"
             )
             raise
 
-    async def _ensure_pool(self, quiet: bool = False) -> None:
+    async def _ensure_pool(self) -> None:
         """Ensure the connection pool is initialised."""
         if self.pool is None:
             async with self._pool_reconnect_lock:
                 if self.pool is None:
-                    await self.initdb(attempts=1, quiet=quiet)
-
-    async def check_connection(self, timeout: float) -> None:
-        async def _select_one() -> None:
-            await self._ensure_pool(quiet=True)
-            assert self.pool is not None
-            async with self.pool.acquire(timeout=timeout / 2) as connection:
-                await connection.fetchval("SELECT 1")
-
-        await asyncio.wait_for(_select_one(), timeout=timeout / 2)
+                    await self.initdb(attempts=1)
 
     async def _reset_pool(self, failed_pool: Pool | None = None) -> None:
         async with self._pool_reconnect_lock:
