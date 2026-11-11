@@ -219,8 +219,8 @@ Liveness and readiness probes run `GET healthCheck.path` (default `/documents/st
 `ghcr.io/neuro-inc/lightrag-server` (built from `server/`) also patches the upstream server so that it recovers from a PostgreSQL outage without a restart, and so that `GET /health` checks the database:
 
 - `200` with `"status": "healthy"` when `SELECT 1` through the PostgreSQL pool succeeds.
-- `503` with `"status": "unhealthy"` when it does not succeed within `HEALTH_CHECK_TIMEOUT` seconds (default `3`, set it through `extraEnv`). Half of the timeout is for getting a connection and running the query, the other half for releasing a connection from a server that stopped answering, so the whole check stays within the timeout.
-- `503` also when every connection in the pool is busy with other requests for that long, because the check cannot tell a busy pool from a database that does not answer. In both cases new requests would have to wait as well.
+- `503` with `"status": "unhealthy"` when it does not succeed within `HEALTH_CHECK_TIMEOUT` seconds (default `3`, set it through `extraEnv`; it must be greater than `0`, otherwise `/health` always returns `503`). Half of the timeout is for getting a connection and running the query, the other half for releasing a connection from a server that stopped answering, so the whole check stays within the timeout.
+- `503` also when every connection in the pool stays busy with other requests for longer than half of `HEALTH_CHECK_TIMEOUT` (1.5 s by default), because the check cannot tell a busy pool from a database that does not answer. In both cases new requests would have to wait as well.
 - Failed checks are logged as warnings, so `/health` polling during an outage does not create Sentry events.
 
 While PostgreSQL is down, requests fail after the `POSTGRES_CONNECTION_RETRIES` attempts (default 10, about 195 s with the default 3-30 s backoff; `POSTGRES_CONNECTION_RETRY_BACKOFF` and `POSTGRES_CONNECTION_RETRY_BACKOFF_MAX` set the backoff). Queries already sent to a PostgreSQL server that stopped answering, without closing the connection, can still hang: the pool sets no query timeout.
