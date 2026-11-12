@@ -214,7 +214,11 @@ kubectl logs -l app.kubernetes.io/name=lightrag-minimal -f
 ```
 
 ### Health Checks
-The deployment includes health checks on `/health` endpoint.
+Liveness and readiness probes run `GET healthCheck.path` (default `/documents/status_counts`) from inside the container with the API key, so they go through the PostgreSQL pool. Measured on dev-gke with the default values: the pod turned NotReady 31-39 s into a PostgreSQL outage, and liveness restarted the container 2 min 13 s into a 5 min outage. A 75 s outage recovered without a restart.
+
+`GET /health` does not check the database and stays `200` during a PostgreSQL outage.
+
+`ghcr.io/neuro-inc/lightrag-server` (built from `server/`) patches the upstream reconnect code so that the server recovers from a PostgreSQL outage without a restart. While PostgreSQL is down, a request fails after `POSTGRES_CONNECTION_RETRIES` attempts (default 10, about 195 s with the default 3-30 s backoff; `POSTGRES_CONNECTION_RETRY_BACKOFF` and `POSTGRES_CONNECTION_RETRY_BACKOFF_MAX` set the backoff). Queries already sent to a PostgreSQL server that stopped answering, without closing the connection, can still hang: the pool sets no query timeout.
 
 ## Scaling
 
